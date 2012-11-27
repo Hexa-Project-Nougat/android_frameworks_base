@@ -6383,6 +6383,11 @@ public final class Settings {
          */
         public static final String DEMO_USER_SETUP_COMPLETE
                 = "demo_user_setup_complete";
+		/**
+         * Whether to display the ADB notification.
+         * @hide
+         */
+        public static final String ADB_NOTIFY = "adb_notify";
 
         /**
          * This are the settings to be backed up.
