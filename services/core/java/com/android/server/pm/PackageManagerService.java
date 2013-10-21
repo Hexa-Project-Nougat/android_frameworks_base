@@ -102,6 +102,8 @@ import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
+import android.app.AlarmManager;
+import android.app.AppOpsManager;
 import android.app.IActivityManager;
 import android.app.ResourcesManager;
 import android.app.admin.IDevicePolicyManager;
@@ -218,6 +220,8 @@ import android.util.SparseIntArray;
 import android.util.Xml;
 import android.util.jar.StrictJarFile;
 import android.view.Display;
+
+import android.provider.Settings;
 
 import com.android.internal.R;
 import com.android.internal.annotations.GuardedBy;
@@ -950,6 +954,8 @@ public class PackageManagerService extends IPackageManager.Stub {
                 && (filter.hasDataScheme(IntentFilter.SCHEME_HTTP) ||
                         filter.hasDataScheme(IntentFilter.SCHEME_HTTPS));
     }
+
+    private AppOpsManager mAppOps;
 
     // Set of pending broadcasts for aggregating enable/disable of components.
     static class PendingPackageBroadcasts {
@@ -1740,6 +1746,18 @@ public class PackageManagerService extends IPackageManager.Stub {
                 }
             }
 
+			if (!update && !isSystemApp(res.pkg)) {
+			    boolean privacyGuard = Settings.System.getIntForUser(
+						mContext.getContentResolver(),
+						Settings.System.PRIVACY_GUARD_DEFAULT,
+						0, UserHandle.USER_CURRENT) == 1;
+				if (privacyGuard) {
+					mAppOps.setPrivacyGuardSettingForPackage(
+							res.pkg.applicationInfo.uid,
+							res.pkg.applicationInfo.packageName, true);
+				}
+			}
+
             // Log current value of "unknown sources" setting
             EventLog.writeEvent(EventLogTags.UNKNOWN_SOURCES_ENABLED,
                     getUnknownSourcesSettings());
@@ -2063,6 +2081,9 @@ public class PackageManagerService extends IPackageManager.Stub {
                 ApplicationInfo.FLAG_SYSTEM, ApplicationInfo.PRIVATE_FLAG_PRIVILEGED);
         mSettings.addSharedUserLPw("android.uid.shell", SHELL_UID,
                 ApplicationInfo.FLAG_SYSTEM, ApplicationInfo.PRIVATE_FLAG_PRIVILEGED);
+
+
+        mAppOps = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
 
         String separateProcesses = SystemProperties.get("debug.separate_processes");
         if (separateProcesses != null && separateProcesses.length() > 0) {
