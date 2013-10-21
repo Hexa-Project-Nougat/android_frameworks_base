@@ -90,6 +90,7 @@ import android.app.ActivityManager.RunningTaskInfo;
 import android.app.ActivityManager.StackId;
 import android.app.ActivityOptions;
 import android.app.AppGlobals;
+import android.app.AppOpsManager;
 import android.app.IActivityController;
 import android.app.ResultInfo;
 import android.content.ComponentName;
@@ -119,6 +120,7 @@ import android.util.EventLog;
 import android.util.Log;
 import android.util.Slog;
 import android.view.Display;
+import android.provider.Settings;
 
 import com.android.internal.app.IVoiceInteractor;
 import com.android.internal.content.ReferrerIntent;
@@ -1428,6 +1430,8 @@ final class ActivityStack {
             // When resuming an activity, require it to call requestVisibleBehind() again.
             setVisibleBehindActivity(null);
         }
+
+        updatePrivacyGuardNotificationLocked(next);
     }
 
     private void setVisible(ActivityRecord r, boolean visible) {
@@ -2631,6 +2635,32 @@ final class ActivityStack {
         }
         mTaskHistory.add(taskNdx, task);
         updateTaskMovement(task, true);
+    }
+
+    private final void updatePrivacyGuardNotificationLocked(ActivityRecord next) {
+
+        String privacyGuardPackageName = mStackSupervisor.mPrivacyGuardPackageName;
+        if (privacyGuardPackageName != null && privacyGuardPackageName.equals(next.packageName)) {
+            return;
+        }
+
+        boolean privacy = mService.mAppOpsService.getPrivacyGuardSettingForPackage(
+                next.app.uid, next.packageName);
+        boolean privacyNotification = (Settings.System.getInt(
+                mService.mContext.getContentResolver(),
+                Settings.System.PRIVACY_GUARD_NOTIFICATION, 1) == 1);
+
+        if (privacyGuardPackageName != null && !privacy) {
+            Message msg = mService.mHandler.obtainMessage(
+                    ActivityManagerService.CANCEL_PRIVACY_NOTIFICATION_MSG, next.userId);
+            msg.sendToTarget();
+            mStackSupervisor.mPrivacyGuardPackageName = null;
+        } else if (privacy && privacyNotification) {
+            Message msg = mService.mHandler.obtainMessage(
+                    ActivityManagerService.POST_PRIVACY_NOTIFICATION_MSG, next);
+            msg.sendToTarget();
+            mStackSupervisor.mPrivacyGuardPackageName = next.packageName;
+        }
     }
 
     final void startActivityLocked(ActivityRecord r, boolean newTask, boolean keepCurTransition,
