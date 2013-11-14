@@ -2,4 +2,8 @@
 
     <!-- Quick settings tiles columns and rows config -->
     <integer name="config_qs_num_rows_landscape_default">2</integer>
+    <!-- EdgeGesture service -->
+    <java-symbol type="dimen" name="edge_gesture_trigger_distance" />
+    <java-symbol type="dimen" name="edge_gesture_perpendicular_distance" />
+    <java-symbol type="dimen" name="edge_gesture_trigger_thickness" />
 </resources>
