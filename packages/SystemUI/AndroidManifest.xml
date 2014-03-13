@@ -226,6 +226,12 @@
             </intent-filter>
         </receiver>
 
+	 	<!-- started from PhoneWindowManager
+	             TODO: Should have an android:permission attribute -->
+	        <service android:name=".nameless.onthego.OnTheGoService"
+	            android:process=":onthego"
+	            android:exported="false" />
+
         <!-- started from PhoneWindowManager
              TODO: Should have an android:permission attribute -->
         <service android:name=".omni.screenrecord.TakeScreenrecordService"
@@ -538,3 +544,4 @@
         </receiver>
     </application>
 </manifest>
+
