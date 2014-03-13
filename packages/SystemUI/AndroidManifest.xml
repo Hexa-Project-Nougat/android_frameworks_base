@@ -222,6 +222,12 @@
                 <action android:name="com.android.systemui.screenshot.SHOW_ERROR" />
             </intent-filter>
         </receiver>
+		
+	 	<!-- started from PhoneWindowManager
+	             TODO: Should have an android:permission attribute -->
+	        <service android:name=".nameless.onthego.OnTheGoService"
+	            android:process=":onthego"
+	            android:exported="false" />
 
         <service android:name=".ImageWallpaper"
                 android:permission="android.permission.BIND_WALLPAPER"
@@ -529,3 +535,4 @@
         </receiver>
     </application>
 </manifest>
+
