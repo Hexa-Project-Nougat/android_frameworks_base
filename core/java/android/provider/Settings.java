@@ -3838,6 +3838,14 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_QUICK_QS_PULLDOWN = "status_bar_quick_qs_pulldown";
+		
+        /**
+         * Whether to wake the display when plugging or unplugging the charger
+         *
+         * @hide
+         */
+        public static final String WAKE_WHEN_PLUGGED_OR_UNPLUGGED =
+                "wake_when_plugged_or_unplugged";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
