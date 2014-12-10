@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-/* Copyright 2013-2015, SlimRoms project
+/* Copyright 2012, The Android Open Source Project
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 
   <!-- Config IME switcher -->
   <java-symbol type="bool" name="config_show_IMESwitcher" />
-
+ 
   <!-- Shortcut actions -->
   <java-symbol type="drawable" name="ic_shortcut_action_silent" />
   <java-symbol type="drawable" name="ic_shortcut_action_theme_switch" />
