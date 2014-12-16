@@ -52,6 +52,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.InputMethodService;
+import android.net.Uri;
 import android.media.AudioAttributes;
 import android.media.MediaMetadata;
 import android.media.session.MediaController;
@@ -377,6 +378,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     int[] mAbsPos = new int[2];
     ArrayList<Runnable> mPostCollapseRunnables = new ArrayList<>();
 
+    // Battery saver bars color
+    private int mBatterySaverWarningColor;
+
     // for disabling the status bar
     int mDisabled1 = 0;
     int mDisabled2 = 0;
@@ -400,6 +404,48 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private int mNavigationIconHints = 0;
     private HandlerThread mHandlerThread;
+
+    class SettingsObserver extends UserContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void observe() {
+            super.observe();
+
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.BATTERY_SAVER_MODE_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            update();
+        }
+		
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            super.onChange(selfChange, uri);
+            if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.BATTERY_SAVER_MODE_COLOR))) {
+                    mBatterySaverWarningColor = Settings.System.getIntForUser(
+                            mContext.getContentResolver(),
+                            Settings.System.BATTERY_SAVER_MODE_COLOR, 1,
+                            UserHandle.USER_CURRENT);
+                    if (mBatterySaverWarningColor != 0) {
+                        mBatterySaverWarningColor = mContext.getResources()
+                                .getColor(com.android.internal.R.color.battery_saver_mode_color);
+                    }
+            }
+					update();
+		}
+
+        @Override
+        protected void unobserve() {
+            super.unobserve();
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.unregisterContentObserver(this);
+        }
+
+    }
 
     // ensure quick settings is disabled until the current user makes it through the setup wizard
     private boolean mUserSetup = false;
@@ -665,13 +711,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         addNavigationBar();
 
+		SettingsObserver observer = new SettingsObserver(mHandler);
+        observer.observe();
+
         // Lastly, call to the icon policy to install/update all the icons.
         mIconPolicy = new PhoneStatusBarPolicy(mContext, mIconController, mCastController,
                 mHotspotController, mUserInfoController, mBluetoothController,
                 mRotationLockController, mNetworkController.getDataSaverController(),
                 mSuController);
         mIconPolicy.setCurrentUserSetup(mUserSetup);
-        mSettingsObserver.onChange(false); // set up
+        mSettingsObserver.onChange(true); // set up
 
         mHeadsUpObserver.onChange(true); // set up
         if (ENABLE_HEADS_UP) {
@@ -823,6 +872,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         R.id.keyguard_indication_text),
                 mKeyguardBottomArea.getLockIcon());
         mKeyguardBottomArea.setKeyguardIndicationController(mKeyguardIndicationController);
+
+        mBatterySaverWarningColor = Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.BATTERY_SAVER_MODE_COLOR, 1,
+                UserHandle.USER_CURRENT);
+        if (mBatterySaverWarningColor != 0) {
+            mBatterySaverWarningColor = mContext.getResources()
+                   .getColor(com.android.internal.R.color.battery_saver_mode_color);
+        }
 
         if (ENABLE_LOCKSCREEN_WALLPAPER) {
             mLockscreenWallpaper = new LockscreenWallpaper(mContext, this, mHandler);
@@ -2955,6 +3013,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 && windowState != WINDOW_STATE_HIDDEN && !powerSave;
         if (powerSave && getBarState() == StatusBarState.SHADE) {
             mode = MODE_WARNING;
+        }
+        if (mode == MODE_WARNING) {
+            transitions.setWarningColor(mBatterySaverWarningColor);
         }
         transitions.transitionTo(mode, anim);
     }
