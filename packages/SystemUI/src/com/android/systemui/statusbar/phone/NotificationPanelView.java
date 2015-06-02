@@ -26,6 +26,8 @@ import android.app.StatusBarManager;
 import android.content.Context;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
+import android.content.ContentResolver;
+import android.database.ContentObserver;
 import android.graphics.*;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -47,6 +49,9 @@ import android.view.WindowInsets;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.net.Uri;
+import android.os.Handler;
+import android.provider.Settings;
 import android.provider.Settings;
 
 import com.android.internal.logging.MetricsLogger;
@@ -149,7 +154,6 @@ public class NotificationPanelView extends PanelView implements
     private KeyguardStatusBarView mKeyguardStatusBar;
     public static QSContainer mQsContainer;
     private AutoReinflateContainer mQsAutoReinflateContainer;
-    private LinearLayout mTaskManagerPanel;
     private KeyguardStatusView mKeyguardStatusView;
     private TextView mClockView;
     private View mReserveNotificationSpace;
@@ -298,6 +302,9 @@ public class NotificationPanelView extends PanelView implements
     private static AlphaAnimation mAlphaAnimation;
     private static boolean mTranslucentQuickSettings;
     private static FrameLayout mInnerBlurredView;
+	
+    private Handler mHandler = new Handler();
+    private SettingsObserver mSettingsObserver;
 
     private static Animation.AnimationListener mAnimationListener = new Animation.AnimationListener() {
 
@@ -313,6 +320,10 @@ public class NotificationPanelView extends PanelView implements
         public void onAnimationRepeat(Animation anim) {}
 
     };
+
+    // Task manager
+    private boolean mShowTaskManager;
+    private LinearLayout mTaskManagerPanel;
 
     public NotificationPanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -385,6 +396,7 @@ public class NotificationPanelView extends PanelView implements
                 mNotificationStackScroller.setQsContainer(mQsContainer);
             }
         });
+		mSettingsObserver = new SettingsObserver(mHandler);
 
         mKeyguardWeatherInfo = (TextView) mKeyguardStatusView.findViewById(R.id.weather_info);
         setQSStroke();
@@ -605,12 +617,14 @@ public class NotificationPanelView extends PanelView implements
                 BLUR_DARK_COLOR_PREFERENCE_KEY,
                 BLUR_LIGHT_COLOR_PREFERENCE_KEY,
                 BLUR_MIXED_COLOR_PREFERENCE_KEY);
+		mSettingsObserver.observe();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         TunerService.get(mContext).removeTunable(this);
+		mSettingsObserver.unobserve();
         mWeatherController.removeCallback(this);
     }
 
@@ -1751,8 +1765,7 @@ public class NotificationPanelView extends PanelView implements
     }
 
     public void setTaskManagerVisibility(boolean mTaskManagerShowing) {
-        if (Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.ENABLE_TASK_MANAGER, 0) == 1) {
+        if (mShowTaskManager) {
             cancelAnimation();
             boolean expandVisually = mQsExpanded || mStackScrollerOverscrolling;
             mQsContainer.getQsPanel().setVisibility(expandVisually && !mTaskManagerShowing
@@ -2688,7 +2701,6 @@ public class NotificationPanelView extends PanelView implements
         } else if (source == StatusBarManager.CAMERA_LAUNCH_SOURCE_SCREEN_GESTURE) {
             mLastCameraLaunchSource = KeyguardBottomAreaView.CAMERA_LAUNCH_SOURCE_SCREEN_GESTURE;
         } else {
-
             // Default.
             mLastCameraLaunchSource = KeyguardBottomAreaView.CAMERA_LAUNCH_SOURCE_AFFORDANCE;
         }
@@ -2910,6 +2922,40 @@ public class NotificationPanelView extends PanelView implements
                 qSGd.setCornerRadius(mCustomCornerRadius);
                 mQsContainer.setBackground(qSGd);
             }
+        }
+    }
+	
+    class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.ENABLE_TASK_MANAGER), false, this, UserHandle.USER_ALL);
+            update();
+        }
+
+        void unobserve() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.unregisterContentObserver(this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            update();
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            update();
+        }
+
+        public void update() {
+            ContentResolver resolver = mContext.getContentResolver();
+	    mShowTaskManager = Settings.System.getIntForUser(resolver,
+                    Settings.System.ENABLE_TASK_MANAGER, 0, UserHandle.USER_CURRENT) == 1;
         }
     }
 }

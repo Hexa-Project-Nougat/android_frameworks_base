@@ -75,7 +75,6 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
     private NextAlarmController mNextAlarmController;
     private SettingsButton mSettingsButton;
     protected View mSettingsContainer;
-    private View mTaskManagerButton;
 
     private TextView mAlarmStatus;
     private View mAlarmStatusCollapsed;
@@ -123,6 +122,10 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
     private int mQsPanelOffsetNormal;
     private int mQsPanelOffsetHeader;
 
+    // Task manager
+    private boolean mShowTaskManager;
+    private View mTaskManagerButton;
+
     public QuickStatusBarHeader(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -162,10 +165,7 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
         mAlarmStatusCollapsed.setOnClickListener(this);
         mAlarmStatus = (TextView) findViewById(R.id.alarm_status);
         mAlarmStatus.setOnClickListener(this);
-        if (Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.ENABLE_TASK_MANAGER, 0) == 1) {
-            mTaskManagerButton = findViewById(R.id.task_manager_button);
-        }
+        mTaskManagerButton = findViewById(R.id.task_manager_button);
         mMultiUserSwitch = (MultiUserSwitch) findViewById(R.id.multi_user_switch);
         mMultiUserAvatar = (ImageView) mMultiUserSwitch.findViewById(R.id.multi_user_avatar);
 
@@ -324,7 +324,7 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
                 ? View.VISIBLE : View.INVISIBLE);
         mSettingsContainer.findViewById(R.id.tuner_icon).setVisibility(View.INVISIBLE);
         if (mTaskManagerButton != null) {
-            mTaskManagerButton.setVisibility(mExpanded ? View.VISIBLE : View.GONE);
+            mTaskManagerButton.setVisibility(mExpanded && enabletaskmanager() ? View.VISIBLE : View.GONE);
         }
         final boolean isDemo = UserManager.isDeviceInDemoMode(mContext);
         mMultiUserSwitch.setVisibility(mExpanded && mMultiUserSwitch.hasMultipleUsers() && !isDemo
@@ -595,4 +595,9 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
         return Settings.System.getInt(mContext.getContentResolver(),
             Settings.System.QS_MULTIUSER_SWITCH_TOGGLE, 1) == 1;
     }
+
+   public boolean enabletaskmanager() {
+       return Settings.System.getInt(mContext.getContentResolver(),
+            Settings.System.ENABLE_TASK_MANAGER, 0) == 1;
+   }
 }
