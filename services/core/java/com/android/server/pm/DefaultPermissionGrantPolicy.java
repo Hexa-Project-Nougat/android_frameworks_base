@@ -652,6 +652,16 @@ final class DefaultPermissionGrantPolicy {
                 grantRuntimePermissionsLPw(nfcTagPkg, PHONE_PERMISSIONS, false, userId);
             }
 
+            // Chromium Sign-in for DU
+            PackageParser.Package chromiumPackage = getDefaultProviderAuthorityPackageLPr(
+                    "org.chromium.chrome", userId);
+            if (chromiumPackage != null) {
+                grantRuntimePermissionsLPw(chromiumPackage, CONTACTS_PERMISSIONS, userId);
+                grantRuntimePermissionsLPw(chromiumPackage, STORAGE_PERMISSIONS, userId);
+            }
+
+            mService.mSettings.onDefaultRuntimePermissionsGrantedLPr(userId);
+
             // Storage Manager
             Intent storageManagerIntent = new Intent(StorageManager.ACTION_MANAGE_STORAGE);
             PackageParser.Package storageManagerPckg = getDefaultSystemHandlerActivityPackageLPr(
