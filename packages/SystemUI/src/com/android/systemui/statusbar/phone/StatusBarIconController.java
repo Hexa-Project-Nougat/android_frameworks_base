@@ -16,6 +16,8 @@
 
 package com.android.systemui.statusbar.phone;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -45,6 +47,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.internal.statusbar.StatusBarIcon;
+import com.android.internal.util.rr.ColorHelper;
+import com.android.internal.util.rr.DeviceUtils;
+import com.android.internal.util.darkkat.StatusBarColorHelper;
 import com.android.systemui.BatteryLevelTextView;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.Interpolators;
@@ -69,6 +74,25 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
     public static final long DEFAULT_TINT_ANIMATION_DURATION = 120;
     public static final String ICON_BLACKLIST = "icon_blacklist";
     public static final int DEFAULT_ICON_TINT = Color.WHITE;
+    private static final int STATUS_ICONS_COLOR         = 0;
+    private static final int NETWORK_SIGNAL_COLOR       = 1;
+    private static final int NO_SIM_COLOR               = 2;
+    private static final int AIRPLANE_MODE_COLOR        = 3;
+    private int mColorToChange;
+    private int mStatusIconsColor;
+    private int mStatusIconsColorOld;
+    private int mStatusIconsColorTint;
+    private int mNetworkSignalColor;
+    private int mNetworkSignalColorOld;
+    private int mNetworkSignalColorTint;
+    private int mNoSimColor;
+    private int mNoSimColorOld;
+    private int mNoSimColorTint;
+    private int mAirplaneModeColor;
+    private int mAirplaneModeColorOld;
+    private int mAirplaneModeColorTint;
+    private int mNotificationIconsColor;
+    private int mNotificationIconsColorTint;
 
     private Context mContext;
     private PhoneStatusBar mPhoneStatusBar;
@@ -117,6 +141,7 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
     private boolean mTransitionDeferring;
     private long mTransitionDeferringStartTime;
     private long mTransitionDeferringDuration;
+	private Animator mColorTransitionAnimator;
 
     private final ArraySet<String> mIconBlacklist = new ArraySet<>();
 
@@ -170,9 +195,28 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
         loadDimens();
 
         mBatteryLevelView = (BatteryLevelTextView) statusBar.findViewById(R.id.battery_level);
-
+		
+		setUpCustomColors();
+		mColorTransitionAnimator = createColorTransitionAnimator(0, 1);
         TunerService.get(mContext).addTunable(this, ICON_BLACKLIST);
     }
+	
+    private void setUpCustomColors() {
+        mStatusIconsColor = StatusBarColorHelper.getStatusIconsColor(mContext);
+        mStatusIconsColorOld = mStatusIconsColor;
+        mStatusIconsColorTint = mStatusIconsColor;
+        mNetworkSignalColor = StatusBarColorHelper.getNetworkSignalColor(mContext);
+        mNetworkSignalColorOld = mNetworkSignalColor;
+        mNetworkSignalColorTint = mNetworkSignalColor;
+        mNoSimColor = StatusBarColorHelper.getNoSimColor(mContext);
+        mNoSimColorOld = mNoSimColor;
+        mNoSimColorTint = mNoSimColor;
+        mAirplaneModeColor = StatusBarColorHelper.getAirplaneModeColor(mContext);
+        mAirplaneModeColorOld = mAirplaneModeColor;
+        mAirplaneModeColorTint = mAirplaneModeColor;
+        mNotificationIconsColor = StatusBarColorHelper.getNotificationIconsColor(mContext);
+        mNotificationIconsColorTint = mNotificationIconsColor;
+     }
 
     public void setSignalCluster(SignalClusterView signalCluster) {
         mSignalCluster = signalCluster;
@@ -255,6 +299,7 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
         mStatusIconsKeyguard.addView(view, viewIndex, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, mIconSize));
         applyIconTint();
+		updateStatusIconsKeyguardColor();
     }
 
     public void setIcon(String slot, int resourceId, CharSequence contentDescription) {
@@ -346,6 +391,7 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
         view = (StatusBarIconView) mStatusIconsKeyguard.getChildAt(viewIndex);
         view.set(icon);
         applyIconTint();
+		updateStatusIconsKeyguardColor();
     }
 
     public void updateNotificationIcons(NotificationData notificationData) {
@@ -557,6 +603,18 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
         mIconTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
                 mLightModeIconColorSingleTone, mDarkModeIconColorSingleTone);
         mNotificationIconAreaController.setIconTint(mIconTint);
+		
+        mStatusIconsColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+                mStatusIconsColor, StatusBarColorHelper.getStatusIconsColorDark(mContext));
+        mNetworkSignalColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+                mNetworkSignalColor, StatusBarColorHelper.getNetworkSignalColorDark(mContext));
+        mNoSimColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+                mNoSimColor, StatusBarColorHelper.getNoSimColorDark(mContext));
+        mAirplaneModeColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+                mAirplaneModeColor, StatusBarColorHelper.getAirplaneModeColorDark(mContext));
+        mNotificationIconsColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+                mNotificationIconsColor, StatusBarColorHelper.getNotificationIconsColorDark(mContext));
+		
         applyIconTint();
     }
 
@@ -616,13 +674,16 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
     private void applyIconTint() {
         for (int i = 0; i < mStatusIcons.getChildCount(); i++) {
             StatusBarIconView v = (StatusBarIconView) mStatusIcons.getChildAt(i);
-            v.setImageTintList(ColorStateList.valueOf(getTint(mTintArea, v, mIconTint)));
+            v.setImageTintList(ColorStateList.valueOf(getTint(mTintArea, v, mStatusIconsColorTint)));
         }
-        mSignalCluster.setIconTint(mIconTint, mDarkIntensity, mTintArea);
+        mSignalCluster.setIconTint(mNetworkSignalColorTint, mNoSimColorTint, mAirplaneModeColorTint, mDarkIntensity, mTintArea);
+		
         mBatteryMeterView.setDarkIntensity(
                 isInArea(mTintArea, mBatteryMeterView) ? mDarkIntensity : 0);
         mClockController.setTextColor(mTintArea, mIconTint);
-        mBatteryLevelView.setTextColor(getTint(mTintArea, mBatteryLevelView, mIconTint));
+		
+        //mBatteryLevelView.setTextColor(getTint(mTintArea, mBatteryLevelView, mIconTint));
+		
         if (Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_CARRIER_COLOR,
                 mContext.getResources().getColor(R.color.status_bar_clock_color),
@@ -763,6 +824,58 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
             }
         }
     }
+	
+    private ValueAnimator createColorTransitionAnimator(float start, float end) {
+        ValueAnimator animator = ValueAnimator.ofFloat(start, end);
+
+        animator.setDuration(500);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
+            @Override public void onAnimationUpdate(ValueAnimator animation) {
+                float position = animation.getAnimatedFraction();
+                int blendedFrame;
+                int blended;
+                if (mColorToChange == NETWORK_SIGNAL_COLOR) {
+                    blended = ColorHelper.getBlendColor(
+                            mNetworkSignalColorOld, mNetworkSignalColor, position);
+                    mSignalCluster.applyNetworkSignalTint(blended);
+                } else if (mColorToChange == NO_SIM_COLOR) {
+                    blended = ColorHelper.getBlendColor(
+                            mNoSimColorOld, mNoSimColor, position);
+                    mSignalCluster.applyNoSimTint(blended);
+                } else if (mColorToChange == AIRPLANE_MODE_COLOR) {
+                    blended = ColorHelper.getBlendColor(
+                            mAirplaneModeColorOld, mAirplaneModeColor, position);
+                    mSignalCluster.applyAirplaneModeTint(blended);
+                 } else if (mColorToChange == STATUS_ICONS_COLOR) {
+                    blended = ColorHelper.getBlendColor(
+                            mStatusIconsColorOld, mStatusIconsColor, position);
+                    for (int i = 0; i < mStatusIcons.getChildCount(); i++) {
+                        StatusBarIconView v = (StatusBarIconView) mStatusIcons.getChildAt(i);
+                        v.setImageTintList(ColorStateList.valueOf(blended));
+                    }
+                }
+            }
+        });
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (mColorToChange == NETWORK_SIGNAL_COLOR) {
+                    mNetworkSignalColorOld = mNetworkSignalColor;
+                    mNetworkSignalColorTint = mNetworkSignalColor;
+                } else if (mColorToChange == NO_SIM_COLOR) {
+                    mNoSimColorOld = mNoSimColor;
+                    mNoSimColorTint = mNoSimColor;
+                } else if (mColorToChange == AIRPLANE_MODE_COLOR) {
+                    mAirplaneModeColorOld = mAirplaneModeColor;
+                    mAirplaneModeColorTint = mAirplaneModeColor;
+                } else if (mColorToChange == STATUS_ICONS_COLOR) {
+                    mStatusIconsColorOld = mStatusIconsColor;
+                    mStatusIconsColorTint = mStatusIconsColor;
+                }
+            }
+        });
+        return animator;
+    }
 
     public int getCurrentVisibleNotificationIcons() {
         return mNotificationIconAreaController.getNotificationIconsCount();
@@ -805,4 +918,75 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
                 UserHandle.USER_CURRENT);
         }
     }
+	
+    public void updateStatusIconsColor() {
+        mStatusIconsColor = StatusBarColorHelper.getStatusIconsColor(mContext);
+        if (mStatusIcons.getChildCount() > 0) {
+            mColorToChange = STATUS_ICONS_COLOR;
+            mColorTransitionAnimator.start();
+        } else {
+            mStatusIconsColorOld = mStatusIconsColor;
+            mStatusIconsColorTint = mStatusIconsColor;
+        }
+        updateStatusIconsKeyguardColor();
+    }
+
+    public void updateStatusIconsKeyguardColor() {
+        if (mStatusIconsKeyguard.getChildCount() > 0) {
+            for (int index = 0; index < mStatusIconsKeyguard.getChildCount(); index++) {
+                StatusBarIconView v = (StatusBarIconView) mStatusIconsKeyguard.getChildAt(index);
+                v.setImageTintList(ColorStateList.valueOf(mStatusIconsColor));
+            }
+        }
+    }
+
+
+    public void updateNetworkIconColors() {
+        mNetworkSignalColor = StatusBarColorHelper.getNetworkSignalColor(mContext);
+        mNoSimColor = StatusBarColorHelper.getNoSimColor(mContext);
+        mAirplaneModeColor = StatusBarColorHelper.getAirplaneModeColor(mContext);
+        mNetworkSignalColorOld = mNetworkSignalColor;
+        mNoSimColorOld = mNoSimColor;
+        mAirplaneModeColorOld = mAirplaneModeColor;
+        mNetworkSignalColorTint = mNetworkSignalColor;
+        mNoSimColorTint = mNoSimColor;
+        mAirplaneModeColorTint = mAirplaneModeColor;
+
+        mSignalCluster.setIgnoreSystemUITuner(true);
+        mSignalCluster.setIconTint(mNetworkSignalColor, mNoSimColor, mAirplaneModeColor, mDarkIntensity, mTintArea);
+    }
+
+    public void updateNetworkSignalColor() {
+        mNetworkSignalColor = StatusBarColorHelper.getNetworkSignalColor(mContext);
+        mColorToChange = NETWORK_SIGNAL_COLOR;
+        mColorTransitionAnimator.start();
+    }
+
+    public void updateNoSimColor() {
+        mNoSimColor = StatusBarColorHelper.getNoSimColor(mContext);
+        mColorToChange = NO_SIM_COLOR;
+        mColorTransitionAnimator.start();
+    }
+
+    public void updateAirplaneModeColor() {
+        mAirplaneModeColor = StatusBarColorHelper.getAirplaneModeColor(mContext);
+        mColorToChange = AIRPLANE_MODE_COLOR;
+        mColorTransitionAnimator.start();
+    }
+
+	/*
+    public void updateNotificationIconsColor() {
+        mNotificationIconsColor = StatusBarColorHelper.getNotificationIconsColor(mContext);
+        mNotificationIconsColorTint = mNotificationIconsColor;
+        for (int i = 0; i < mNotificationIcons.getChildCount(); i++) {
+            StatusBarIconView v = (StatusBarIconView) mNotificationIcons.getChildAt(i);
+            boolean isPreL = Boolean.TRUE.equals(v.getTag(R.id.icon_is_pre_L));
+            boolean colorize = !isPreL || isGrayscale(v);
+            if (colorize) {
+                v.setImageTintList(ColorStateList.valueOf(mNotificationIconsColor));
+            }
+        }
+        mMoreIcon.setImageTintList(ColorStateList.valueOf(mNotificationIconsColor));
+    }
+		*/
 }

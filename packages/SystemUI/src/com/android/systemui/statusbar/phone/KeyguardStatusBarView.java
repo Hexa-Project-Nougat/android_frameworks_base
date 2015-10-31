@@ -26,6 +26,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.graphics.Typeface;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.Settings;
@@ -41,10 +42,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.systemui.BatteryMeterDrawable;
+import com.android.internal.util.darkkat.StatusBarColorHelper;
+import com.android.keyguard.CarrierText;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
 import com.android.systemui.qs.QSPanel;
+import com.android.systemui.statusbar.SignalClusterView;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
 import com.android.systemui.statusbar.policy.UserInfoController;
@@ -71,6 +75,7 @@ public class KeyguardStatusBarView extends RelativeLayout
     private boolean mBatteryListening;
 
     private View mSystemIconsSuperContainer;
+    private SignalClusterView mSignalCluster;
     private MultiUserSwitch mMultiUserSwitch;
     private ImageView mMultiUserAvatar;
     private TextView mBatteryLevel;
@@ -117,6 +122,7 @@ public class KeyguardStatusBarView extends RelativeLayout
     private Boolean mForceBatteryText;
 	
 	private TextView mKeyguardClock;
+	private final Rect mTintArea = new Rect();
 
     private ContentObserver mObserver = new ContentObserver(new Handler()) {
         public void onChange(boolean selfChange, Uri uri) {
@@ -151,6 +157,7 @@ public class KeyguardStatusBarView extends RelativeLayout
     protected void onFinishInflate() {
         super.onFinishInflate();
         mSystemIconsSuperContainer = findViewById(R.id.system_icons_super_container);
+		mSignalCluster = (SignalClusterView) findViewById(R.id.signal_cluster);
         mSystemIconsContainer = findViewById(R.id.system_icons_container);
         mMultiUserSwitch = (MultiUserSwitch) findViewById(R.id.multi_user_switch);
         mMultiUserAvatar = (ImageView) findViewById(R.id.multi_user_avatar);
@@ -681,5 +688,25 @@ public class KeyguardStatusBarView extends RelativeLayout
             }
             set.start();
         }
+    }
+
+    public void updateNetworkIconColors() {
+        mSignalCluster.setIgnoreSystemUITuner(true);
+        mSignalCluster.setIconTint(
+                StatusBarColorHelper.getNetworkSignalColor(mContext),
+                StatusBarColorHelper.getNoSimColor(mContext),
+                StatusBarColorHelper.getAirplaneModeColor(mContext), 0f, mTintArea);
+    }
+
+    public void updateNetworkSignalColor() {
+        mSignalCluster.applyNetworkSignalTint(StatusBarColorHelper.getNetworkSignalColor(getContext()));
+    }
+
+    public void updateNoSimColor() {
+        mSignalCluster.applyNoSimTint(StatusBarColorHelper.getNoSimColor(getContext()));
+    }
+
+    public void updateAirplaneModeColor() {
+        mSignalCluster.applyAirplaneModeTint(StatusBarColorHelper.getAirplaneModeColor(getContext()));
     }
 }

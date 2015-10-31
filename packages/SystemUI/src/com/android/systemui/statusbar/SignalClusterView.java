@@ -86,9 +86,13 @@ public class SignalClusterView
     private String mEthernetDescription;
     private ArrayList<PhoneState> mPhoneStates = new ArrayList<PhoneState>();
     private int mIconTint = Color.WHITE;
+    private int mNetworkSignalTint = Color.WHITE;
+    private int mNoSimTint = Color.WHITE;
+    private int mAirplaneModeTint = Color.WHITE;
     private float mDarkIntensity;
     private final Rect mTintArea = new Rect();
 
+	private boolean mIgnoreSystemUITuner = false;
     ViewGroup mEthernetGroup, mWifiGroup;
     View mNoSimsCombo;
     ImageView mVpn, mEthernet, mWifi, mAirplane, mNoSims, mEthernetDark, mWifiDark, mNoSimsDark;
@@ -225,7 +229,9 @@ public class SignalClusterView
         int endPadding = mMobileSignalGroup.getChildCount() > 0 ? mMobileSignalGroupEndPadding : 0;
         mMobileSignalGroup.setPaddingRelative(0, 0, endPadding, 0);
 
-        TunerService.get(mContext).addTunable(this, StatusBarIconController.ICON_BLACKLIST);
+        if (!mIgnoreSystemUITuner) {
+	            TunerService.get(mContext).addTunable(this, StatusBarIconController.ICON_BLACKLIST);
+	        }
 
         apply();
         applyIconTint();
@@ -573,20 +579,54 @@ public class SignalClusterView
         }
     }
 
-    public void setIconTint(int tint, float darkIntensity, Rect tintArea) {
-        boolean changed = tint != mIconTint || darkIntensity != mDarkIntensity
-                || !mTintArea.equals(tintArea);
-        mIconTint = tint;
+	public void setIconTint(int signalTint, int noSimTint, int airplaneModeTint, float darkIntensity, Rect tintArea) {
+        mNetworkSignalTint = signalTint;
+        mNoSimTint = noSimTint;
+        mAirplaneModeTint = airplaneModeTint;
         mDarkIntensity = darkIntensity;
         mTintArea.set(tintArea);
-        if (changed && isAttachedToWindow()) {
+        if (isAttachedToWindow()) {
             applyIconTint();
+        }
+    }
+	
+    public void applyNetworkSignalTint(int tint) {
+        mNetworkSignalTint = tint;
+        if (isAttachedToWindow()) {
+			setTint(mVpn, StatusBarIconController.getTint(mTintArea, mVpn, tint));
+			setTint(mWifi, StatusBarIconController.getTint(mTintArea, mWifi, tint));
+			setTint(mEthernet, StatusBarIconController.getTint(mTintArea, mEthernet, tint));
+            for (int i = 0; i < mPhoneStates.size(); i++) {
+                mPhoneStates.get(i).setIconTint(tint, 0f, mTintArea);
+            }
+        }
+    }
+
+    public void applyNoSimTint(int tint) {
+        mNoSimTint = tint;
+        if (isAttachedToWindow()) {
+			setTint(mNoSims, StatusBarIconController.getTint(mTintArea, mNoSims, mNoSimTint));
+        }
+    }
+
+    public void applyAirplaneModeTint(int tint) {
+        mAirplaneModeTint = tint;
+        if (isAttachedToWindow()) {
+			setTint(mAirplane, StatusBarIconController.getTint(mTintArea, mAirplane, mAirplaneModeTint));
         }
     }
 
     private void applyIconTint() {
-        setTint(mVpn, StatusBarIconController.getTint(mTintArea, mVpn, mIconTint));
-        setTint(mAirplane, StatusBarIconController.getTint(mTintArea, mAirplane, mIconTint));
+		
+		setTint(mVpn, StatusBarIconController.getTint(mTintArea, mVpn, mNetworkSignalTint));
+		setTint(mNoSims, StatusBarIconController.getTint(mTintArea, mNoSims, mNoSimTint));
+		setTint(mNoSimsDark, StatusBarIconController.getTint(mTintArea, mNoSimsDark, mNoSimTint));
+		setTint(mWifi, StatusBarIconController.getTint(mTintArea, mWifi, mNetworkSignalTint));
+		setTint(mWifiDark, StatusBarIconController.getTint(mTintArea, mWifiDark, mNetworkSignalTint));
+		setTint(mEthernet, StatusBarIconController.getTint(mTintArea, mEthernet, mNetworkSignalTint));
+		setTint(mEthernetDark, StatusBarIconController.getTint(mTintArea, mEthernetDark, mNetworkSignalTint));
+		setTint(mAirplane, StatusBarIconController.getTint(mTintArea, mAirplane, mAirplaneModeTint));
+
         applyDarkIntensity(
                 StatusBarIconController.getDarkIntensity(mTintArea, mNoSims, mDarkIntensity),
                 mNoSims, mNoSimsDark);
@@ -599,7 +639,7 @@ public class SignalClusterView
                 StatusBarIconController.getDarkIntensity(mTintArea, mEthernet, mDarkIntensity),
                 mEthernet, mEthernetDark);
         for (int i = 0; i < mPhoneStates.size(); i++) {
-            mPhoneStates.get(i).setIconTint(mIconTint, mDarkIntensity, mTintArea);
+            mPhoneStates.get(i).setIconTint(mNetworkSignalTint, mDarkIntensity, mTintArea);
         }
     }
 
@@ -614,6 +654,30 @@ public class SignalClusterView
 
     private int currentVpnIconId(boolean isBranded) {
         return isBranded ? R.drawable.stat_sys_branded_vpn : R.drawable.stat_sys_vpn_ic;
+    }
+	
+    public void setIgnoreSystemUITuner(boolean ignore) {
+        if (mIgnoreSystemUITuner == ignore) {
+            return;
+        }
+
+        mIgnoreSystemUITuner = ignore;
+        if (mIgnoreSystemUITuner) {
+            TunerService.get(mContext).removeTunable(this);
+            mBlockAirplane = false;
+            mBlockMobile = false;
+            mBlockEthernet = false;
+            mBlockWifi = false;
+        }
+        if (isAttachedToWindow()) {
+            if (mIgnoreSystemUITuner) {
+                // Re-register to get new callbacks.
+                mNC.removeSignalCallback(this);
+                mNC.addSignalCallback(this);
+            } else {
+                TunerService.get(mContext).addTunable(this, StatusBarIconController.ICON_BLACKLIST);
+            }
+        }
     }
 
     private class PhoneState {
@@ -751,6 +815,8 @@ public class SignalClusterView
         }
 
         public void setIconTint(int tint, float darkIntensity, Rect tintArea) {
+			setTint(mMobile, StatusBarIconController.getTint(tintArea, mMobile, tint));
+			setTint(mMobileDark, StatusBarIconController.getTint(tintArea, mMobileDark, tint));
             applyDarkIntensity(
                     StatusBarIconController.getDarkIntensity(tintArea, mMobile, darkIntensity),
                     mMobile, mMobileDark);
