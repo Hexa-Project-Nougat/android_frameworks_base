@@ -125,12 +125,13 @@ public class RecentsView extends FrameLayout {
     @ViewDebug.ExportedProperty(deepExport=true, prefix="touch_")
     private RecentsViewTouchHandler mTouchHandler;
     private final FlingAnimationUtils mFlingAnimationUtils;
-	
     TextView mMemText;
     ProgressBar mMemBar;
 
     private ActivityManager mAm;
     private int mTotalMem;
+	
+    View mClearRecents;
 
     public RecentsView(Context context) {
         this(context, null);
@@ -256,6 +257,17 @@ public class RecentsView extends FrameLayout {
         return mLastTaskLaunchedWasFreeform;
     }
 
+    public void dismissAllTasksAnimated() {
+        int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View child = getChildAt(i);
+            if (child != mSearchBar) {
+                TaskStackView stackView = (TaskStackView) child;
+                stackView.dismissAllTasks();
+            }
+        }
+    }
+
     /** Launches the focused task from the first stack if possible */
     public boolean launchFocusedTask(int logEvent) {
         if (mTaskStackView != null) {
@@ -339,6 +351,13 @@ public class RecentsView extends FrameLayout {
         EventBus.getDefault().register(this, RecentsActivity.EVENT_BUS_PRIORITY + 1);
         EventBus.getDefault().register(mTouchHandler, RecentsActivity.EVENT_BUS_PRIORITY + 2);
 		
+        mClearRecents = ((View)getParent()).findViewById(R.id.clear_recents);
+        mClearRecents.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                dismissAllTasksAnimated();
+            }
+        });
+		
         mMemText = (TextView) ((View)getParent()).findViewById(R.id.recents_memory_text);
         mMemBar = (ProgressBar) ((View)getParent()).findViewById(R.id.recents_memory_bar);
 		updateMemoryStatus();
@@ -383,11 +402,25 @@ public class RecentsView extends FrameLayout {
                     ? searchBarSpaceBounds.height() + 25
                     : mContext.getResources().getDimensionPixelSize(R.dimen.status_bar_header_height);
             mMemBar.setPadding(0, padding, 0, 0);
+			
+	        if (mClearRecents != null) {
+	            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)
+	                    mClearRecents.getLayoutParams();
+	            params.topMargin = taskStackBounds.top;
+	            params.rightMargin = width - taskStackBounds.right;
+	            mClearRecents.setLayoutParams(params);
+	        }
 
         setMeasuredDimension(width, height);
 		showMemDisplay();
     }
-	
+
+    public void noUserInteraction() {
+        if (mClearRecents != null) {
+            mClearRecents.setVisibility(View.VISIBLE);
+        }
+    }
+
     private boolean showMemDisplay() {
         boolean enableMemDisplay = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.SYSTEMUI_RECENTS_MEM_DISPLAY, 0) == 1;

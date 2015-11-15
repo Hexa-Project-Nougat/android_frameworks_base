@@ -412,6 +412,12 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
         } else {
             MetricsLogger.count(this, "overview_source_home", 1);
         }
+		
+		if (!loadPlan.hasTasks()) {
+			findViewById(R.id.clear_recents).setVisibility(View.GONE);
+			} else {
+				findViewById(R.id.clear_recents).setVisibility(View.VISIBLE);
+		}
 
         // Keep track of the total stack task count
         int taskCount = mRecentsView.getStack().getTaskCount();
