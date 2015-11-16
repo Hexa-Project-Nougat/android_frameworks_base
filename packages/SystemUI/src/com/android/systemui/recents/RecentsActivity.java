@@ -414,9 +414,9 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
         }
 		
 		if (!loadPlan.hasTasks()) {
-			findViewById(R.id.clear_recents).setVisibility(View.GONE);
+			findViewById(R.id.floating_action_button).setVisibility(View.GONE);
 			} else {
-				findViewById(R.id.clear_recents).setVisibility(View.VISIBLE);
+				findViewById(R.id.floating_action_button).setVisibility(View.VISIBLE);
 		}
 
         // Keep track of the total stack task count

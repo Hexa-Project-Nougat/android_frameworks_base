@@ -110,6 +110,10 @@ public class RecentsView extends FrameLayout {
     // clear button location
     public static final int RECENTS_CLEAR_ALL_TOP_RIGHT    = 0;
     public static final int RECENTS_CLEAR_ALL_TOP_LEFT     = 1;
+    public static final int RECENTS_CLEAR_ALL_TOP_CENTER   = 2;
+    public static final int RECENTS_CLEAR_ALL_BOTTOM_RIGHT = 3;
+    public static final int RECENTS_CLEAR_ALL_BOTTOM_LEFT  = 4;
+    public static final int RECENTS_CLEAR_ALL_BOTTOM_CENTER  = 5;
 
     private TaskStack mStack;
     private TaskStackView mTaskStackView;
@@ -138,6 +142,7 @@ public class RecentsView extends FrameLayout {
     private int mTotalMem;
 	
     View mClearRecents;
+	View mFloatingButton;
 
     public RecentsView(Context context) {
         this(context, null);
@@ -357,6 +362,7 @@ public class RecentsView extends FrameLayout {
         EventBus.getDefault().register(this, RecentsActivity.EVENT_BUS_PRIORITY + 1);
         EventBus.getDefault().register(mTouchHandler, RecentsActivity.EVENT_BUS_PRIORITY + 2);
 		
+		mFloatingButton = ((View)getParent()).findViewById(R.id.floating_action_button);
         mClearRecents = ((View)getParent()).findViewById(R.id.clear_recents);
         mClearRecents.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -412,26 +418,37 @@ public class RecentsView extends FrameLayout {
                     : mContext.getResources().getDimensionPixelSize(R.dimen.status_bar_header_height);
             mMemBar.setPadding(0, padding, 0, 0);
 			
-        if (mClearRecents != null && showClearAllRecents) {
+        if (mFloatingButton != null && showClearAllRecents) {
             int clearRecentsLocation = Settings.System.getIntForUser(
                 mContext.getContentResolver(), Settings.System.RECENTS_CLEAR_ALL_LOCATION,
-            RECENTS_CLEAR_ALL_TOP_RIGHT, UserHandle.USER_CURRENT);
+            RECENTS_CLEAR_ALL_BOTTOM_RIGHT, UserHandle.USER_CURRENT);
 	            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)
-	                    mClearRecents.getLayoutParams();
+	                    mFloatingButton.getLayoutParams();
 	            params.topMargin = taskStackBounds.top;
-	            params.rightMargin = width - taskStackBounds.right;
             switch (clearRecentsLocation) {
                 case RECENTS_CLEAR_ALL_TOP_LEFT:
                     params.gravity = Gravity.TOP | Gravity.LEFT;
                     break;
                 case RECENTS_CLEAR_ALL_TOP_RIGHT:
-                default:
                     params.gravity = Gravity.TOP | Gravity.RIGHT;
                     break;
+                case RECENTS_CLEAR_ALL_TOP_CENTER:
+                    params.gravity = Gravity.TOP | Gravity.CENTER;
+                    break;
+                case RECENTS_CLEAR_ALL_BOTTOM_LEFT:
+                    params.gravity = Gravity.BOTTOM | Gravity.LEFT;
+                    break;
+                case RECENTS_CLEAR_ALL_BOTTOM_RIGHT:
+                default:
+                    params.gravity = Gravity.BOTTOM | Gravity.RIGHT;
+                    break;
+                case RECENTS_CLEAR_ALL_BOTTOM_CENTER:
+                    params.gravity = Gravity.BOTTOM | Gravity.CENTER;
+                    break;
             }
-	            mClearRecents.setLayoutParams(params);
+	            mFloatingButton.setLayoutParams(params);
         } else {
-            mClearRecents.setVisibility(View.GONE);
+            mFloatingButton.setVisibility(View.GONE);
 	        }
 
         setMeasuredDimension(width, height);
