@@ -36,6 +36,8 @@ import android.util.ArraySet;
 import android.util.AttributeSet;
 import android.view.AppTransitionAnimationSpec;
 import android.view.IAppTransitionAnimationSpecsFuture;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -104,6 +106,10 @@ public class RecentsView extends FrameLayout {
 
     private static final int SHOW_STACK_ACTION_BUTTON_DURATION = 134;
     private static final int HIDE_STACK_ACTION_BUTTON_DURATION = 100;
+	
+    // clear button location
+    public static final int RECENTS_CLEAR_ALL_TOP_RIGHT    = 0;
+    public static final int RECENTS_CLEAR_ALL_TOP_LEFT     = 1;
 
     private TaskStack mStack;
     private TaskStackView mTaskStackView;
@@ -381,6 +387,9 @@ public class RecentsView extends FrameLayout {
         if (mTaskStackView.getVisibility() != GONE) {
             mTaskStackView.measure(widthMeasureSpec, heightMeasureSpec);
         }
+		
+        boolean showClearAllRecents = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.SHOW_CLEAR_ALL_RECENTS, 0, UserHandle.USER_CURRENT) != 0;
 
         // Measure the empty view to the full size of the screen
         if (mEmptyView.getVisibility() != GONE) {
@@ -403,12 +412,26 @@ public class RecentsView extends FrameLayout {
                     : mContext.getResources().getDimensionPixelSize(R.dimen.status_bar_header_height);
             mMemBar.setPadding(0, padding, 0, 0);
 			
-	        if (mClearRecents != null) {
+        if (mClearRecents != null && showClearAllRecents) {
+            int clearRecentsLocation = Settings.System.getIntForUser(
+                mContext.getContentResolver(), Settings.System.RECENTS_CLEAR_ALL_LOCATION,
+            RECENTS_CLEAR_ALL_TOP_RIGHT, UserHandle.USER_CURRENT);
 	            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)
 	                    mClearRecents.getLayoutParams();
 	            params.topMargin = taskStackBounds.top;
 	            params.rightMargin = width - taskStackBounds.right;
+            switch (clearRecentsLocation) {
+                case RECENTS_CLEAR_ALL_TOP_LEFT:
+                    params.gravity = Gravity.TOP | Gravity.LEFT;
+                    break;
+                case RECENTS_CLEAR_ALL_TOP_RIGHT:
+                default:
+                    params.gravity = Gravity.TOP | Gravity.RIGHT;
+                    break;
+            }
 	            mClearRecents.setLayoutParams(params);
+        } else {
+            mClearRecents.setVisibility(View.GONE);
 	        }
 
         setMeasuredDimension(width, height);
