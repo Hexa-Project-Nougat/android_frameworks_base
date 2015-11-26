@@ -326,9 +326,13 @@ public class RecentsView extends FrameLayout {
 
     @Override
     protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
         EventBus.getDefault().register(this, RecentsActivity.EVENT_BUS_PRIORITY + 1);
         EventBus.getDefault().register(mTouchHandler, RecentsActivity.EVENT_BUS_PRIORITY + 2);
-        super.onAttachedToWindow();
+		
+        mMemText = (TextView) ((View)getParent()).findViewById(R.id.recents_memory_text);
+        mMemBar = (ProgressBar) ((View)getParent()).findViewById(R.id.recents_memory_bar);
+		updateMemoryStatus();
     }
 
     @Override
@@ -391,7 +395,7 @@ public class RecentsView extends FrameLayout {
         return true;
     }
 
-    private void updateMemoryStatus() {
+    public void updateMemoryStatus() {
         if (mMemText.getVisibility() == View.GONE
                 || mMemBar.getVisibility() == View.GONE) return;
 
@@ -415,13 +419,6 @@ public class RecentsView extends FrameLayout {
         } catch (IOException e) {
         }
         return memory / 1048576;
-    }
-    
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        mMemText = (TextView) ((View)getParent()).findViewById(R.id.recents_memory_text);
-        mMemBar = (ProgressBar) ((View)getParent()).findViewById(R.id.recents_memory_bar);
     }
 
     /**
