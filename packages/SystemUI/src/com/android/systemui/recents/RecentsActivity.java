@@ -443,9 +443,24 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
         // Keep track of the total stack task count
         int taskCount = mRecentsView.getStack().getTaskCount();
         MetricsLogger.histogram(this, "overview_task_count", taskCount);
+		
+		setFullScreen();
 
         // After we have resumed, set the visible state until the next onStop() call
         mIsVisible = true;
+    }
+	
+    private void setFullScreen() {
+       if (Settings.System.getInt(getContentResolver(),
+           Settings.System.RECENTS_FULL_SCREEN, 0) == 1) {
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        } else {
+        // do nothing at all for now
+        }
     }
 
     @Override
