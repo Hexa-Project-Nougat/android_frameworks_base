@@ -925,6 +925,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
 
         addGestureAnywhereView();
+		addAppCircleSidebar();
 		
         try {
             boolean showNav = mWindowManagerService.hasNavigationBar();
