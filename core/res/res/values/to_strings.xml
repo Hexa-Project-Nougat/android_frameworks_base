@@ -52,4 +52,8 @@
     <string name="adb_net_active_notification_title">ADB over network enabled</string>
     <string name="adb_both_active_notification_title">ADB over USB &amp; network enabled</string>
     <string name="adb_active_generic_notification_message">Touch to disable debugging.</string>
+
+    <!-- Screenrecord in the power menu -->
+    <string name="powermenu_screenrecord">Screen record</string>
+
 </resources>
