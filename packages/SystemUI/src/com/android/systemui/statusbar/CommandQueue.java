@@ -75,6 +75,9 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int MSG_TOGGLE_APP_SPLIT_SCREEN       = 30 << MSG_SHIFT;
     private static final int MSG_APP_TRANSITION_FINISHED       = 31 << MSG_SHIFT;
     private static final int MSG_DISMISS_KEYBOARD_SHORTCUTS    = 32 << MSG_SHIFT;
+    private static final int MSG_TOGGLE_LAST_APP            = 33 << MSG_SHIFT;
+    private static final int MSG_TOGGLE_KILL_APP            = 34 << MSG_SHIFT;
+    private static final int MSG_TOGGLE_SCREENSHOT          = 35 << MSG_SHIFT;
 
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
@@ -125,6 +128,10 @@ public class CommandQueue extends IStatusBar.Stub {
         void startAssist(Bundle args);
         void onCameraLaunchGestureDetected(int source);
         void showTvPictureInPictureMenu();
+        void toggleLastApp();
+        void toggleKillApp();
+        void toggleScreenshot();
+        void toggleOrientationListener(boolean enable);
 
         void addQsTile(ComponentName tile);
         void remQsTile(ComponentName tile);
@@ -256,7 +263,9 @@ public class CommandQueue extends IStatusBar.Stub {
             mHandler.obtainMessage(MSG_CANCEL_PRELOAD_RECENT_APPS, 0, 0, null).sendToTarget();
         }
     }
-
+    public void toggleOrientationListener(boolean enable) {
+        mCallbacks.toggleOrientationListener(enable);
+    }
     @Override
     public void dismissKeyboardShortcutsMenu() {
         synchronized (mLock) {
@@ -388,6 +397,27 @@ public class CommandQueue extends IStatusBar.Stub {
         }
     }
 
+    public void toggleLastApp() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_TOGGLE_LAST_APP);
+            mHandler.obtainMessage(MSG_TOGGLE_LAST_APP, 0, 0, null).sendToTarget();
+        }
+    }
+
+    public void toggleKillApp() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_TOGGLE_KILL_APP);
+            mHandler.obtainMessage(MSG_TOGGLE_KILL_APP, 0, 0, null).sendToTarget();
+        }
+    }
+
+    public void toggleScreenshot() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_TOGGLE_SCREENSHOT);
+            mHandler.obtainMessage(MSG_TOGGLE_SCREENSHOT, 0, 0, null).sendToTarget();
+        }
+    }
+
     private final class H extends Handler {
         public void handleMessage(Message msg) {
             final int what = msg.what & MSG_MASK;
@@ -502,6 +532,15 @@ public class CommandQueue extends IStatusBar.Stub {
                     break;
                 case MSG_TOGGLE_APP_SPLIT_SCREEN:
                     mCallbacks.toggleSplitScreen();
+                    break;
+                case MSG_TOGGLE_LAST_APP:
+                    mCallbacks.toggleLastApp();
+                    break;
+                case MSG_TOGGLE_KILL_APP:
+                    mCallbacks.toggleKillApp();
+                    break;
+                case MSG_TOGGLE_SCREENSHOT:
+                    mCallbacks.toggleScreenshot();
                     break;
             }
         }

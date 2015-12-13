@@ -233,6 +233,15 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
             }
         }
 
+    @Override
+    public void toggleOrientationListener(boolean enable) {
+        if (mBar != null) {
+            try {
+                mBar.toggleOrientationListener(enable);
+            } catch (RemoteException ex) {}
+        }
+    }
+
         @Override
         public void setCurrentUser(int newUserId) {
             if (SPEW) Slog.d(TAG, "Setting current user to user " + newUserId);
@@ -651,6 +660,32 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
         enforceStatusBar();
     }
 
+    public void toggleLastApp() {
+        if (mBar != null) {
+            try {
+                mBar.toggleLastApp();
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
+    public void toggleKillApp() {
+        if (mBar != null) {
+            try {
+                mBar.toggleKillApp();
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
+    public void toggleScreenshot() {
+        if (mBar != null) {
+            try {
+                mBar.toggleScreenshot();
+            } catch (RemoteException ex) {}
+        }
+    }
+
     private void enforceStatusBar() {
         mContext.enforceCallingOrSelfPermission(android.Manifest.permission.STATUS_BAR,
                 "StatusBarManagerService");
@@ -847,7 +882,7 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
     void manageDisableListLocked(int userId, int what, IBinder token, String pkg, int which) {
         if (SPEW) {
             Slog.d(TAG, "manageDisableList userId=" + userId
-                    + " what=0x" + Integer.toHexString(what) + " pkg=" + pkg);
+                 " what=0x" + Integer.toHexString(what) + " pkg=" + pkg);
         }
         // update the list
         final int N = mDisableRecords.size();
@@ -909,8 +944,8 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
         if (mContext.checkCallingOrSelfPermission(android.Manifest.permission.DUMP)
                 != PackageManager.PERMISSION_GRANTED) {
             pw.println("Permission Denial: can't dump StatusBar from from pid="
-                    + Binder.getCallingPid()
-                    + ", uid=" + Binder.getCallingUid());
+                 Binder.getCallingPid()
+                 ", uid=" + Binder.getCallingUid());
             return;
         }
 
@@ -922,10 +957,10 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
             for (int i=0; i<N; i++) {
                 DisableRecord tok = mDisableRecords.get(i);
                 pw.println("    [" + i + "] userId=" + tok.userId
-                                + " what1=0x" + Integer.toHexString(tok.what1)
-                                + " what2=0x" + Integer.toHexString(tok.what2)
-                                + " pkg=" + tok.pkg
-                                + " token=" + tok.token);
+                             " what1=0x" + Integer.toHexString(tok.what1)
+                             " what2=0x" + Integer.toHexString(tok.what2)
+                             " pkg=" + tok.pkg
+                             " token=" + tok.token);
             }
             pw.println("  mCurrentUserId=" + mCurrentUserId);
         }
