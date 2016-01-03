@@ -40,6 +40,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.UserHandle;
 import android.os.Handler;
+import android.os.Bundle;
 import android.util.ArraySet;
 import android.util.AttributeSet;
 import android.view.animation.Animation;
@@ -59,6 +60,7 @@ import android.view.ViewAnimationUtils;
 import android.view.WindowInsets;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.ImageButton;
 
@@ -106,6 +108,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -173,6 +176,9 @@ public class RecentsView extends FrameLayout {
 
     private ActivityManager mAm;
     private int mTotalMem;
+
+    TextClock mClock;
+    TextView mDate;
 
     public RecentsView(Context context) {
         this(context, null);
@@ -409,6 +415,7 @@ public class RecentsView extends FrameLayout {
         EventBus.getDefault().register(this, RecentsActivity.EVENT_BUS_PRIORITY + 1);
         EventBus.getDefault().register(mTouchHandler, RecentsActivity.EVENT_BUS_PRIORITY + 2);
         mSettingsObserver.observe();
+		updateTimeVisibility();
 		updateeverything();
         super.onAttachedToWindow();
     }
@@ -688,6 +695,35 @@ public class RecentsView extends FrameLayout {
         mSettingsObserver.unobserve();
     }
 
+    public void updateTimeVisibility() {
+        boolean showClock = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.RECENTS_FULL_SCREEN_CLOCK, 0, UserHandle.USER_CURRENT) != 0;
+        boolean showDate = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.RECENTS_FULL_SCREEN_DATE, 0, UserHandle.USER_CURRENT) != 0;
+        boolean fullscreenEnabled = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.IMMERSIVE_RECENTS, 0, UserHandle.USER_CURRENT) != 0;
+
+        if (fullscreenEnabled) {
+            if (showClock) {
+                mClock.setVisibility(View.VISIBLE);
+            } else {
+                mClock.setVisibility(View.GONE);
+            }
+            if (showDate) {
+                long dateStamp = System.currentTimeMillis();
+                DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(mContext);
+                String currentDateString =  dateFormat.format(dateStamp);
+                mDate.setText(currentDateString);
+                mDate.setVisibility(View.VISIBLE);
+            } else {
+                mDate.setVisibility(View.GONE);
+            }
+        } else {
+            mClock.setVisibility(View.GONE);
+            mDate.setVisibility(View.GONE);
+        }
+    }
+
     /**
      * This is called with the full size of the window since we are handling our own insets.
      */
@@ -701,6 +737,8 @@ public class RecentsView extends FrameLayout {
             mTaskStackView.measure(widthMeasureSpec, heightMeasureSpec);
             showMemDisplay();
         }
+
+        updateTimeVisibility();
 
         // Measure the empty view to the full size of the screen
         if (mEmptyView.getVisibility() != GONE) {
@@ -1342,6 +1380,8 @@ public class RecentsView extends FrameLayout {
 	   
         mMemText = (TextView) ((View)getParent()).findViewById(R.id.recents_memory_text);
         mMemBar = (ProgressBar) ((View)getParent()).findViewById(R.id.recents_memory_bar);
+        mClock = (TextClock) ((View)getParent()).findViewById(R.id.recents_clock);
+        mDate = (TextView) ((View)getParent()).findViewById(R.id.recents_date);
         mFloatingButton = ((View)getParent()).findViewById(R.id.floating_action_button);
 	    mClearRecents = (ImageButton) ((View)getParent()).findViewById(R.id.clear_recents);
 	    final ContentResolver resolver = mContext.getContentResolver();
@@ -1371,6 +1411,7 @@ public class RecentsView extends FrameLayout {
                     UserHandle.USER_CURRENT);
         mDefaultcolor = res.getColor(R.color.recents_membar_text_color);
         updateeverything();
+		updateTimeVisibility();
 
         showClearAllRecents = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.SHOW_CLEAR_ALL_RECENTS, 1, UserHandle.USER_CURRENT) != 0;
