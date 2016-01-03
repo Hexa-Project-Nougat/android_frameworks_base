@@ -3851,7 +3851,7 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_CARRIER_FONT_SIZE = "status_bar_carrier_font_size";
-		
+
         /**
          * Whether to use gesture anywhere feature.
          * @hide
@@ -4034,6 +4034,13 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_MAX_NOTIF_CONFIG = "lockscreen_max_notif_cofig";
+		
+        /**
+         * Change fonts for the system lockscreen clock widget
+         *
+         * @hide
+         */
+        public static final String LOCK_CLOCK_FONTS = "lock_clock_fonts";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
