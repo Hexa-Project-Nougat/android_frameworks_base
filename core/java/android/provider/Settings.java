@@ -8252,6 +8252,12 @@ public final class Settings {
          * @hide
          */
         public static final String QS_NIGHT_BRIGHTNESS_VALUE = "qs_night_brightness_value";
+		
+        /**
+         * Whether to show statusbar clock in the keyguard
+         * @hide
+         */
+        public static final String KEYGUARD_SHOW_CLOCK = "keyguard_show_clock";
 
         /**
          * This are the settings to be backed up.
