@@ -110,10 +110,13 @@ public class KeyguardStatusBarView extends RelativeLayout
 
     private boolean mShowBatteryText;
     private Boolean mForceBatteryText;
+	
+	private TextView mKeyguardClock;
 
     private ContentObserver mObserver = new ContentObserver(new Handler()) {
         public void onChange(boolean selfChange, Uri uri) {
 			showStatusBarCarrier();
+			showKeyguardClock();
             updateVisibilities();
         }
     };
@@ -121,6 +124,7 @@ public class KeyguardStatusBarView extends RelativeLayout
     public KeyguardStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
 		showStatusBarCarrier();
+		showKeyguardClock();
     }
 	
     private void showStatusBarCarrier() {
@@ -129,6 +133,11 @@ public class KeyguardStatusBarView extends RelativeLayout
         mCarrierLabelFontStyle = Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.STATUS_BAR_CARRIER_FONT_STYLE, FONT_NORMAL,
                 UserHandle.USER_CURRENT);
+    }
+	
+    private void showKeyguardClock() {
+        int mShowKeyguardClock = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.Secure.KEYGUARD_SHOW_CLOCK, 1, UserHandle.USER_CURRENT);
     }
 
     @Override
@@ -140,6 +149,7 @@ public class KeyguardStatusBarView extends RelativeLayout
         mMultiUserAvatar = (ImageView) findViewById(R.id.multi_user_avatar);
         mBatteryLevel = (TextView) findViewById(R.id.battery_level);
         mCarrierLabel = (TextView) findViewById(R.id.keyguard_carrier_text);
+		mKeyguardClock = (TextView) findViewById(R.id.keyguard_clock);
         loadDimens();
         updateUserSwitcher();
         updateVisibilities();
@@ -192,6 +202,9 @@ public class KeyguardStatusBarView extends RelativeLayout
                 mBatteryLevel.getPaddingBottom());
         mBatteryLevel.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimensionPixelSize(R.dimen.battery_level_text_size));
+        mKeyguardClock.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimensionPixelSize(
+                        com.android.internal.R.dimen.text_size_small_material));
 
         // Respect font size setting.
         mCarrierLabel.setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -242,16 +255,26 @@ public class KeyguardStatusBarView extends RelativeLayout
             mBatteryLevel.setVisibility(
                     mBatteryCharging || mShowBatteryText ? View.VISIBLE : View.GONE);
         }
-
-        if (mCarrierLabel != null) {
-            if (mShowCarrierLabel == 1) {
-                mCarrierLabel.setVisibility(View.VISIBLE);
-            } else if (mShowCarrierLabel == 3) {
-                mCarrierLabel.setVisibility(View.GONE);
+            if (Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.Secure.KEYGUARD_SHOW_CLOCK, 0) == 1) {
+                mKeyguardClock.setVisibility(View.VISIBLE);
             } else {
-                mCarrierLabel.setVisibility(View.GONE);
+                mKeyguardClock.setVisibility(View.GONE);
             }
-        }
+		
+            if (mCarrierLabel != null) {
+                switch (mShowCarrierLabel) {
+                    case 1:
+                        mCarrierLabel.setVisibility(View.VISIBLE);
+                        break;
+                    case 3:
+                        mCarrierLabel.setVisibility(View.GONE);
+                        break;
+                    default:
+                        mCarrierLabel.setVisibility(View.GONE);
+                        break;
+                }
+            }
        getFontStyle(mCarrierLabelFontStyle);
     }
 
@@ -441,6 +464,8 @@ public class KeyguardStatusBarView extends RelativeLayout
                 "status_bar_show_carrier"), false, mObserver);
         getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
                 "status_bar_carrier_font_style"), false, mObserver);
+        getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
+                Settings.Secure.KEYGUARD_SHOW_CLOCK), false, mObserver);
     }
 	
     @Override

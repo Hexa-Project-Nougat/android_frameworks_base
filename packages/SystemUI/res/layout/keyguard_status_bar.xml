@@ -63,6 +63,24 @@
             android:textSize="@dimen/battery_level_text_size"
             android:importantForAccessibility="noHideDescendants"/>
     </LinearLayout>
+	
+    <LinearLayout
+        android:id="@+id/keyguard_statusbar_contents"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="6dp"
+        android:paddingEnd="8dp"
+        android:orientation="horizontal" >
+
+    <com.android.systemui.statusbar.policy.KeyguardClockLeft
+        android:id="@+id/keyguard_clock"
+        android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:singleLine="true"
+        android:paddingEnd="6dip"
+        android:gravity="center"
+        android:visibility="gone" />
 
     <com.android.systemui.statusbar.widget.CarrierLabel
         android:id="@+id/keyguard_carrier_text"
@@ -73,7 +91,6 @@
         android:gravity="center_vertical"
         android:ellipsize="marquee"
         android:textAppearance="@style/TextAppearance.StatusBar.CarrierLabel"
-        android:textColor="#ffffff"
-        android:singleLine="true" />
+        android:textColor="#ffffff" />
 
 </com.android.systemui.statusbar.phone.KeyguardStatusBarView>

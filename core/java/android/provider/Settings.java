@@ -8271,6 +8271,12 @@ public final class Settings {
          * @hide
          */
         public static final String LOCK_QS_DISABLED = "lockscreen_qs_disabled";
+		
+        /**
+         * Whether to show statusbar clock in the keyguard
+         * @hide
+         */
+        public static final String KEYGUARD_SHOW_CLOCK = "keyguard_show_clock";
 
         /**
          * This are the settings to be backed up.
