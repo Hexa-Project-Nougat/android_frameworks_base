@@ -377,7 +377,11 @@ public class KeyguardStatusView extends GridLayout implements
                        Settings.System.LOCK_SCREEN_WEATHER_HIDE_PANEL, 0);
            int numberOfNotificationsToHide = Settings.System.getInt(resolver,
                           Settings.System.LOCK_SCREEN_WEATHER_NUMBER_OF_NOTIFICATIONS, 4);
-	
+           int ownerInfoColor = Settings.System.getInt(resolver,
+                   Settings.System.LOCKSCREEN_OWNER_INFO_COLOR, 0xFFFFFFFF);
+           int alarmColor = Settings.System.getInt(resolver,
+                   Settings.System.LOCKSCREEN_ALARM_COLOR, 0xFFFFFFFF);
+		   
            int primaryTextColor =
                    res.getColor(R.color.keyguard_default_primary_text_color);
            // primaryTextColor with a transparency of 70%
@@ -414,6 +418,14 @@ public class KeyguardStatusView extends GridLayout implements
         mWeatherCity.setTextColor(primaryTextColor);
         mWeatherConditionText.setTextColor(primaryTextColor);
         mWeatherCurrentTemp.setTextColor(secondaryTextColor);
+		
+        if (mOwnerInfo != null) {
+            mOwnerInfo.setTextColor(ownerInfoColor);
+        }
+
+        if (mAlarmStatusView != null) {
+            mAlarmStatusView.setTextColor(alarmColor);
+        }
 
         if (mIconNameValue != iconNameValue) {
             mIconNameValue = iconNameValue;
