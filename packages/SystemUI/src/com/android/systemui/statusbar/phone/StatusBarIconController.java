@@ -146,6 +146,7 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
     private final ArraySet<String> mIconBlacklist = new ArraySet<>();
 
     private BatteryLevelTextView mBatteryLevelView;
+	public Boolean mColorSwitch = false;
 
     private final Runnable mTransitionDeferringDoneRunnable = new Runnable() {
         @Override
@@ -168,6 +169,8 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
                 .createNotificationIconAreaController(context, phoneStatusBar);
         mNotificationIconAreaInner =
                 mNotificationIconAreaController.getNotificationInnerAreaView();
+		mColorSwitch =  Settings.System.getInt(mContext.getContentResolver(),
+				 Settings.System.STATUSBAR_COLOR_SWITCH, 0) == 1;
 
         ViewGroup notificationIconArea =
                 (ViewGroup) statusBar.findViewById(R.id.notification_icon_area);
@@ -202,6 +205,9 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
     }
 	
     private void setUpCustomColors() {
+		mColorSwitch =  Settings.System.getInt(mContext.getContentResolver(),
+				 Settings.System.STATUSBAR_COLOR_SWITCH, 0) == 1;
+		if (mColorSwitch) {
         mStatusIconsColor = StatusBarColorHelper.getStatusIconsColor(mContext);
         mStatusIconsColorOld = mStatusIconsColor;
         mStatusIconsColorTint = mStatusIconsColor;
@@ -216,6 +222,7 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
         mAirplaneModeColorTint = mAirplaneModeColor;
         mNotificationIconsColor = StatusBarColorHelper.getNotificationIconsColor(mContext);
         mNotificationIconsColorTint = mNotificationIconsColor;
+	}
      }
 
     public void setSignalCluster(SignalClusterView signalCluster) {
@@ -283,6 +290,8 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
     }
 
     private void addSystemIcon(int index, StatusBarIcon icon) {
+		mColorSwitch =  Settings.System.getInt(mContext.getContentResolver(),
+				 Settings.System.STATUSBAR_COLOR_SWITCH, 0) == 1;
         String slot = getSlot(index);
         int viewIndex = getViewIndex(index);
         boolean blocked = mIconBlacklist.contains(slot);
@@ -299,7 +308,9 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
         mStatusIconsKeyguard.addView(view, viewIndex, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, mIconSize));
         applyIconTint();
+		if (mColorSwitch) {
 		updateStatusIconsKeyguardColor();
+	}
     }
 
     public void setIcon(String slot, int resourceId, CharSequence contentDescription) {
@@ -385,13 +396,17 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
     }
 
     private void handleSet(int index, StatusBarIcon icon) {
+		mColorSwitch =  Settings.System.getInt(mContext.getContentResolver(),
+				 Settings.System.STATUSBAR_COLOR_SWITCH, 0) == 1;
         int viewIndex = getViewIndex(index);
         StatusBarIconView view = (StatusBarIconView) mStatusIcons.getChildAt(viewIndex);
         view.set(icon);
         view = (StatusBarIconView) mStatusIconsKeyguard.getChildAt(viewIndex);
         view.set(icon);
         applyIconTint();
+		if(mColorSwitch) {
 		updateStatusIconsKeyguardColor();
+	}
     }
 
     public void updateNotificationIcons(NotificationData notificationData) {
@@ -600,10 +615,10 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
 
     private void setIconTintInternal(float darkIntensity) {
         mDarkIntensity = darkIntensity;
-        mIconTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
-                mLightModeIconColorSingleTone, mDarkModeIconColorSingleTone);
-        mNotificationIconAreaController.setIconTint(mIconTint);
-		
+		mColorSwitch =  Settings.System.getInt(mContext.getContentResolver(),
+				 Settings.System.STATUSBAR_COLOR_SWITCH, 0) == 1;
+		mNotificationIconAreaController.setIconTint(mIconTint);
+		if (mColorSwitch) {
         mStatusIconsColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
                 mStatusIconsColor, StatusBarColorHelper.getStatusIconsColorDark(mContext));
         mNetworkSignalColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
@@ -614,6 +629,10 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
                 mAirplaneModeColor, StatusBarColorHelper.getAirplaneModeColorDark(mContext));
         mNotificationIconsColorTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
                 mNotificationIconsColor, StatusBarColorHelper.getNotificationIconsColorDark(mContext));
+	} else {
+        mIconTint = (int) ArgbEvaluator.getInstance().evaluate(darkIntensity,
+                mLightModeIconColorSingleTone, mDarkModeIconColorSingleTone);
+	}
 		
         applyIconTint();
     }
@@ -672,17 +691,30 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
     }
 
     private void applyIconTint() {
+	mColorSwitch =  Settings.System.getInt(mContext.getContentResolver(),
+				 Settings.System.STATUSBAR_COLOR_SWITCH, 0) == 1;	
+	int batterytext = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.BATTERY_TEXT_COLOR, 0xFFFFFFFF);
+        int mBatteryIconColor = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.BATTERY_ICON_COLOR, 0xFFFFFFFF);
         for (int i = 0; i < mStatusIcons.getChildCount(); i++) {
             StatusBarIconView v = (StatusBarIconView) mStatusIcons.getChildAt(i);
+			if (mColorSwitch) {
             v.setImageTintList(ColorStateList.valueOf(getTint(mTintArea, v, mStatusIconsColorTint)));
+			 } else {
+				 v.setImageTintList(ColorStateList.valueOf(getTint(mIconTint, v, mStatusIconsColorTint)));
+			 }
         }
+		if (mColorSwitch) {
         mSignalCluster.setIconTint(mNetworkSignalColorTint, mNoSimColorTint, mAirplaneModeColorTint, mDarkIntensity, mTintArea);
-		
+	} else {
+		mSignalCluster.setIconStockTint(mIconTint, mDarkIntensity, mTintArea);
         mBatteryMeterView.setDarkIntensity(
                 isInArea(mTintArea, mBatteryMeterView) ? mDarkIntensity : 0);
         mClockController.setTextColor(mTintArea, mIconTint);
 		
         //mBatteryLevelView.setTextColor(getTint(mTintArea, mBatteryLevelView, mIconTint));
+	}
 		
         if (Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_CARRIER_COLOR,

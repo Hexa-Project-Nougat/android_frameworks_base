@@ -3948,6 +3948,11 @@ public final class Settings {
          * @hide
          */
         public static final String THREE_FINGER_GESTURE = "three_finger_gesture";
+        /**
+         * Whether to show the battery bar
+         * @hide
+         */
+        public static final String STATUSBAR_COLOR_SWITCH = "statusbar_color_switch";
 
         /**
          * Last time gestures were altered.
