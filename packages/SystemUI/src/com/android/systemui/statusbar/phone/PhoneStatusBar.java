@@ -797,10 +797,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 	                // DO Nothing for now
 			}  else if (uri.equals(Settings.System.getUriFor(
                      Settings.System.STATUSBAR_COLOR_SWITCH))) {
-	                 updateRowStates();
-	                 updateSpeedbump();
-	                 updateClearAll();
-	                 updateEmptyShadeView();
+               		updateNetworkSignalColor();
+	 	      		updateNoSimColor();
+	 	      		updateAirplaneModeColor();
+	 	      		updateStatusIconsColor();	
+	 	      		updateNetworkIconColors();
+					updateRowStates();
+               		updateSpeedbump();
+                	updateClearAll();
+                	updateEmptyShadeView();
              }
              update();
  		}
@@ -3048,27 +3053,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 	
     private void updateNetworkIconColors() {
-		mColorSwitch =  Settings.System.getInt(mContext.getContentResolver(),
-				 Settings.System.STATUSBAR_COLOR_SWITCH, 0) == 1;
         if (mIconController != null) {
-			if(mColorSwitch) {
             mIconController.updateNetworkIconColors();
-			}
         }
         if (mKeyguardStatusBar != null) {
-			if(mColorSwitch) {
             mKeyguardStatusBar.updateNetworkIconColors();
-			}
         }
     }
 
     private void updateNetworkSignalColor() {
-		mColorSwitch =  Settings.System.getInt(mContext.getContentResolver(),
-				 Settings.System.STATUSBAR_COLOR_SWITCH, 0) == 1;
         if (mIconController != null) {
-			if(mColorSwitch) {
             mIconController.updateNetworkSignalColor();
-		}
         }
         if (mKeyguardStatusBar != null) {
             mKeyguardStatusBar.updateNetworkIconColors();
@@ -3076,42 +3071,26 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     private void updateNoSimColor() {
-		mColorSwitch =  Settings.System.getInt(mContext.getContentResolver(),
-				 Settings.System.STATUSBAR_COLOR_SWITCH, 0) == 1;
         if (mIconController != null) {
-			if(mColorSwitch) {
             mIconController.updateNoSimColor();
-		}
         }
         if (mKeyguardStatusBar != null) {
-			if(mColorSwitch) {
             mKeyguardStatusBar.updateNoSimColor();
-		}
         }
     }
 
     private void updateAirplaneModeColor() {
-		mColorSwitch =  Settings.System.getInt(mContext.getContentResolver(),
-				 Settings.System.STATUSBAR_COLOR_SWITCH, 0) == 1;
         if (mIconController != null) {
-			if(mColorSwitch) {
             mIconController.updateAirplaneModeColor();
-		}
         }
         if (mKeyguardStatusBar != null) {
-			if(mColorSwitch) {
             mKeyguardStatusBar.updateAirplaneModeColor();
-		}
         }
     }
 
     private void updateStatusIconsColor() {
-		mColorSwitch =  Settings.System.getInt(mContext.getContentResolver(),
-				 Settings.System.STATUSBAR_COLOR_SWITCH, 0) == 1;
         if (mIconController != null) {
-			if(mColorSwitch) {
             mIconController.updateStatusIconsColor();
-		}
         }
     }
 
