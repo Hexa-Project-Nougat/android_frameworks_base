@@ -4692,6 +4692,18 @@ public final class Settings {
          * @hide
          */
         public static final String ONE_HANDED_MODE_UI = "one_handed_mode_ui";
+			
+	   /**
+         * Navbar Button Color Switch
+         * @hide
+         */
+        public static final String NAVBAR_TINT_SWITCH = "navbar_tint_switch";
+        
+         /**
+         * Navbar Button Color
+         * @hide
+         */
+        public static final String NAVBAR_BUTTON_COLOR= "navbar_button_color";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
