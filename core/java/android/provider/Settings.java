@@ -4330,6 +4330,13 @@ public final class Settings {
          * @hide
          */
         public static final String PA_PIE_ALWAYS_RIGHT = "pa_pie_always_right";
+			
+	/**
+         * Navbar Button Color
+         * @hide
+         */			
+         public static final String NAVBAR_BUTTON_COLOR = "navbar_button_color";
+
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
