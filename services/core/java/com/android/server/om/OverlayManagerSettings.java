@@ -53,12 +53,21 @@ class OverlayManagerSettings {
 
     void init(@NonNull String packageName, int userId, @NonNull String targetPackageName,
             @NonNull String baseCodePath) {
-        remove(packageName, userId);
+        init(packageName, userId, targetPackageName, baseCodePath, false);
+    }
+
+    void init(@NonNull String packageName, int userId, @NonNull String targetPackageName,
+            @NonNull String baseCodePath, boolean wait) {
+        remove(packageName, userId, wait);
         SettingsItem item = new SettingsItem(packageName, userId, targetPackageName, baseCodePath);
         mItems.add(item);
     }
 
     void remove(@NonNull String packageName, int userId) {
+        remove(packageName, userId, false);
+    }
+
+    void remove(@NonNull String packageName, int userId, boolean wait) {
         SettingsItem item = select(packageName, userId);
         if (item == null) {
             return;
@@ -66,7 +75,7 @@ class OverlayManagerSettings {
         OverlayInfo oi = item.getOverlayInfo();
         mItems.remove(item);
         if (oi != null) {
-            notifyOverlayRemoved(oi, false);
+            notifyOverlayRemoved(oi, wait);
         }
     }
 
@@ -108,6 +117,10 @@ class OverlayManagerSettings {
     }
 
     void setUpgrading(@NonNull String packageName, int userId, boolean newValue) throws BadKeyException {
+        setUpgrading(packageName, userId, newValue, false);
+    }
+
+    void setUpgrading(@NonNull String packageName, int userId, boolean newValue, boolean wait) throws BadKeyException {
         SettingsItem item = select(packageName, userId);
         if (item == null) {
             throw new BadKeyException(packageName, userId);
@@ -120,7 +133,7 @@ class OverlayManagerSettings {
             OverlayInfo oi = item.getOverlayInfo();
             item.setUpgrading(true);
             item.setState(STATE_NOT_APPROVED_UNKNOWN);
-            notifyOverlayRemoved(oi, false);
+            notifyOverlayRemoved(oi, wait);
             notifySettingsChanged();
         } else {
             item.setUpgrading(false);

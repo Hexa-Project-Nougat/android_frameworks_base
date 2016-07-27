@@ -45,6 +45,7 @@ class OverlayManagerServiceImpl {
     private final PackageManagerHelper mPackageManager;
     private final IdmapManager mIdmapManager;
     private final OverlayManagerSettings mSettings;
+    private boolean waitForRefresh = false;
 
     OverlayManagerServiceImpl(PackageManagerHelper packageManager, IdmapManager idmapManager,
             OverlayManagerSettings settings) {
@@ -90,7 +91,7 @@ class OverlayManagerServiceImpl {
                 updateState(targetPackage, overlayPackage, newUserId);
             } catch (OverlayManagerSettings.BadKeyException e) {
                 Slog.e(TAG, "failed to update settings", e);
-                mSettings.remove(overlayPackage.packageName, newUserId);
+                mSettings.remove(overlayPackage.packageName, newUserId, waitForRefresh);
             }
 
             packagesToUpdateAssets.add(overlayPackage.overlayTarget);
@@ -100,7 +101,7 @@ class OverlayManagerServiceImpl {
         // any OverlayInfo left in storedOverlayInfos is no longer
         // installed and should be removed
         for (OverlayInfo oi: storedOverlayInfos.values()) {
-            mSettings.remove(oi.packageName, oi.userId);
+            mSettings.remove(oi.packageName, oi.userId, waitForRefresh);
             removeIdmapIfPossible(oi);
             packagesToUpdateAssets.add(oi.targetPackageName);
         }
@@ -167,20 +168,24 @@ class OverlayManagerServiceImpl {
         updateAllOverlaysForTarget(packageName, userId, null);
     }
 
+    public void setWaitForRefresh(boolean wfr) {
+        this.waitForRefresh = wfr;
+    }
+
     private void updateAllOverlaysForTarget(@NonNull String packageName, int userId,
             PackageInfo targetPackage) {
         List<OverlayInfo> ois = mSettings.getOverlaysForTarget(packageName, userId);
         for (OverlayInfo oi : ois) {
             PackageInfo overlayPackage = mPackageManager.getPackageInfo(oi.packageName, userId);
             if (overlayPackage == null) {
-                mSettings.remove(oi.packageName, oi.userId);
+                mSettings.remove(oi.packageName, oi.userId, waitForRefresh);
                 removeIdmapIfPossible(oi);
             } else {
                 try {
                     updateState(targetPackage, overlayPackage, userId);
                 } catch (OverlayManagerSettings.BadKeyException e) {
                     Slog.e(TAG, "failed to update settings", e);
-                    mSettings.remove(packageName, userId);
+                    mSettings.remove(packageName, userId, waitForRefresh);
                 }
             }
         }
@@ -207,7 +212,7 @@ class OverlayManagerServiceImpl {
             updateState(targetPackage, overlayPackage, userId);
         } catch (OverlayManagerSettings.BadKeyException e) {
             Slog.e(TAG, "failed to update settings", e);
-            mSettings.remove(packageName, userId);
+            mSettings.remove(packageName, userId, waitForRefresh);
         }
     }
 
@@ -230,7 +235,7 @@ class OverlayManagerServiceImpl {
             updateState(targetPackage, overlayPackage, userId);
         } catch (OverlayManagerSettings.BadKeyException e) {
             Slog.e(TAG, "failed to update settings", e);
-            mSettings.remove(packageName, userId);
+            mSettings.remove(packageName, userId, waitForRefresh);
         }
     }
 
@@ -241,11 +246,11 @@ class OverlayManagerServiceImpl {
 
         try {
             OverlayInfo oi = mSettings.getOverlayInfo(packageName, userId);
-            mSettings.setUpgrading(packageName, userId, true);
+            mSettings.setUpgrading(packageName, userId, true, waitForRefresh);
             removeIdmapIfPossible(oi);
         } catch (OverlayManagerSettings.BadKeyException e) {
             Slog.e(TAG, "failed to update settings", e);
-            mSettings.remove(packageName, userId);
+            mSettings.remove(packageName, userId, waitForRefresh);
         }
     }
 
@@ -267,7 +272,7 @@ class OverlayManagerServiceImpl {
                 // Sneaky little hobbitses, changing the overlay's target package
                 // from one version to the next! We can't use the old version's
                 // state.
-                mSettings.remove(packageName, userId);
+                mSettings.remove(packageName, userId, waitForRefresh);
                 onOverlayPackageAdded(packageName, userId);
                 return;
             }
@@ -278,7 +283,7 @@ class OverlayManagerServiceImpl {
             updateState(targetPackage, overlayPackage, userId);
         } catch (OverlayManagerSettings.BadKeyException e) {
             Slog.e(TAG, "failed to update settings", e);
-            mSettings.remove(packageName, userId);
+            mSettings.remove(packageName, userId, waitForRefresh);
         }
     }
 
@@ -289,7 +294,7 @@ class OverlayManagerServiceImpl {
 
         try {
             OverlayInfo oi = mSettings.getOverlayInfo(packageName, userId);
-            mSettings.remove(packageName, userId);
+            mSettings.remove(packageName, userId, waitForRefresh);
             removeIdmapIfPossible(oi);
         } catch (OverlayManagerSettings.BadKeyException e) {
             Slog.e(TAG, "failed to remove overlay package", e);
