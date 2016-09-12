@@ -4795,6 +4795,12 @@ public final class Settings {
          * @hide
          */
         public static final String DOZE_SCREEN_BRIGHTNESS = "doze_screen_brightness";
+		
+        /**
+         * Disable dashboard suggestions in settings
+         * @hide
+         */
+        public static final String DISABLE_SUGGESTIONS = "disable_suggestions";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
