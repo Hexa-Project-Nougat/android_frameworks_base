@@ -4795,6 +4795,12 @@ public final class Settings {
          * @hide
          */
         public static final String PIXEL_NAV_ANIMATION = "pixel_nav_animation";
+		
+        /**
+         * Disable dashboard suggestions in settings
+         * @hide
+         */
+        public static final String DISABLE_SUGGESTIONS = "disable_suggestions";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
