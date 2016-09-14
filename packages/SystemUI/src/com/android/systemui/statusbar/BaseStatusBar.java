@@ -1065,6 +1065,9 @@ public abstract class BaseStatusBar extends SystemUI implements
             refreshLayout(ld);
         }
 
+        if (mAssistManager != null) {
+            mAssistManager.onConfigurationChanged();
+        }
         int rotation = mDisplay.getRotation();
         if (rotation != mOrientation) {
             if (mPieController != null) mPieController.detachPie();
