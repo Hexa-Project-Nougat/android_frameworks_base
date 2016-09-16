@@ -221,8 +221,6 @@ import android.util.Xml;
 import android.util.jar.StrictJarFile;
 import android.view.Display;
 
-import android.provider.Settings;
-
 import com.android.internal.R;
 import com.android.internal.annotations.GuardedBy;
 import com.android.internal.app.IMediaContainerService;
@@ -1747,9 +1745,9 @@ public class PackageManagerService extends IPackageManager.Stub {
             }
 
 			if (!update && !isSystemApp(res.pkg)) {
-			    boolean privacyGuard = Settings.System.getIntForUser(
+			    boolean privacyGuard = android.provider.Settings.System.getIntForUser(
 						mContext.getContentResolver(),
-						Settings.System.PRIVACY_GUARD_DEFAULT,
+						android.provider.Settings.System.PRIVACY_GUARD_DEFAULT,
 						0, UserHandle.USER_CURRENT) == 1;
 				if (privacyGuard) {
 					mAppOps.setPrivacyGuardSettingForPackage(

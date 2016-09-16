@@ -26,6 +26,9 @@ import android.os.RemoteException;
 import android.os.SystemProperties;
 import android.os.Trace;
 import android.util.Log;
+import android.database.ContentObserver;
+import android.os.SystemProperties;
+import android.os.Handler;
 import android.provider.Settings;
 import android.view.Gravity;
 import android.view.View;
@@ -75,8 +78,8 @@ public class StatusBarWindowManager implements RemoteInputController.Callback {
         Resources res = mContext.getResources();
         boolean enableAccelerometerRotation = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.ACCELEROMETER_ROTATION, 1) != 0;
-        boolean enableLockScreenRotation = CMSettings.System.getInt(mContext.getContentResolver(),
-                CMSettings.System.LOCKSCREEN_ROTATION, 0) != 0;
+        boolean enableLockScreenRotation = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_ROTATION, 0) != 0;
         return SystemProperties.getBoolean("lockscreen.rot_override", false)
                 || (res.getBoolean(R.bool.config_enableLockScreenRotation)
                 && (enableLockScreenRotation && enableAccelerometerRotation));
@@ -440,7 +443,7 @@ public class StatusBarWindowManager implements RemoteInputController.Callback {
                     false,
                     this);
             context.getContentResolver().registerContentObserver(
-                    CMSettings.System.getUriFor(CMSettings.System.LOCKSCREEN_ROTATION),
+                    Settings.System.getUriFor(Settings.System.LOCKSCREEN_ROTATION),
                     false,
                     this);
         }
