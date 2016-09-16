@@ -451,17 +451,39 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
     }
 	
     private void setFullScreen() {
-       if (Settings.System.getInt(getContentResolver(),
-           Settings.System.RECENTS_FULL_SCREEN, 0) == 1) {
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        } else {
-        // do nothing at all for now
+        boolean isPrimary = UserHandle.getCallingUserId() == UserHandle.USER_OWNER;
+        int immersiveRecents = isPrimary ? getImmersiveRecents() : 0;
+
+        switch (immersiveRecents) {
+            case 0:
+                // default AOSP action
+                break;
+            case 1:
+                // full screen action
+                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                break;
+            case 2:
+                // status bar action
+                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                break;
+            case 3:
+                // navigation bar action
+                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                break;
         }
     }
+	
+	private int getFullRecents() {
+        return Settings.System.getInt(getContentResolver(),
+                Settings.System.RECENTS_FULL_SCREEN, 0);
+	}
 
     @Override
     public void onEnterAnimationComplete() {
