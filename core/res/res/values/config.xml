@@ -2536,4 +2536,10 @@
     <!-- Sets whether IME switcher on statusbar should be shown or not. -->
 	<bool name="config_show_IMESwitcher">true</bool>
 
+    <!-- Should we send the battery level to the HAL as the alpha channel
+         of the color?  This should only be used if the HAL does special
+         handling of the value- a use case for this would be a segmented
+         LED that can function as a range bar -->
+    <bool name="config_useSegmentedBatteryLed">false</bool>
+
 </resources>

@@ -36,6 +36,8 @@ import android.widget.GridLayout;
 import android.widget.TextClock;
 import android.widget.TextView;
 
+import android.provider.Settings;
+
 import com.android.internal.widget.LockPatternUtils;
 
 import java.util.Locale;
@@ -239,8 +241,6 @@ public class KeyguardStatusView extends GridLayout {
     }
 
 	public void updateLockscreenFonts() {
-        boolean isPrimary = UserHandle.getCallingUserId() == UserHandle.USER_OWNER;
-        int lockClockFont = isPrimary ? getLockClockFont() : 0;
 
         boolean isPrimary = UserHandle.getCallingUserId() == UserHandle.USER_OWNER;
         int lockClockFont = isPrimary ? getLockClockFont() : 0;

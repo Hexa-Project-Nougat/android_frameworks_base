@@ -3788,12 +3788,6 @@ public final class Settings {
          */
         public static final String EGG_MODE = "egg_mode";
 
-        /**
-         * show the membar in recents
-         *  @hide
-         */
-        public static final String SYSTEMUI_RECENTS_MEM_DISPLAY = "systemui_recents_mem_display";
-
         /** @hide */
         public static final Validator EGG_MODE_VALIDATOR = new Validator() {
             @Override
@@ -3934,13 +3928,6 @@ public final class Settings {
          * @hide
          */
         public static final String PRIVACY_GUARD_DEFAULT = "privacy_guard_default";
-
-        /**
-         * Whether to enable status and navigation bar color in battery saver mode.
-         *
-         * @hide
-         */
-        public static final String BATTERY_SAVER_MODE_COLOR = "battery_save_mode_color";
 
         /**
          * Toast icon
@@ -4293,6 +4280,19 @@ public final class Settings {
          * @hide
          */
         public static final String LOCK_CLOCK_FONTS = "lock_clock_fonts";
+		
+        /**
+         * Whether to use the all the LEDs for the notifications or just one.
+         * @hide
+         */
+        public static final String NOTIFICATION_LIGHT_MULTIPLE_LEDS_ENABLE =
+                "notification_light_multiple_leds_enable";
+		
+        /**
+         * Whether keyguard will rotate to landscape mode
+         * 0 = false, 1 = true
+         */
+        public static final String LOCKSCREEN_ROTATION = "lockscreen_rotation";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -4348,7 +4348,8 @@ public final class Settings {
             RINGTONE,
             LOCK_TO_APP_ENABLED,
             NOTIFICATION_SOUND,
-            ACCELEROMETER_ROTATION
+            ACCELEROMETER_ROTATION,
+			NOTIFICATION_LIGHT_MULTIPLE_LEDS_ENABLE
         };
 
         /**

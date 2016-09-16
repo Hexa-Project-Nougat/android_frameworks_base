@@ -2397,6 +2397,9 @@ class DatabaseHelper extends SQLiteOpenHelper {
 
             loadIntegerSetting(stmt, Settings.System.POINTER_SPEED,
                     R.integer.def_pointer_speed);
+			
+            loadBooleanSetting(stmt, Settings.System.NOTIFICATION_LIGHT_MULTIPLE_LEDS_ENABLE,
+                    R.bool.def_notification_multiple_leds);
 
             /*
              * IMPORTANT: Do not add any more upgrade steps here as the global,

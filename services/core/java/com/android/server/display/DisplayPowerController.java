@@ -50,6 +50,9 @@ import android.util.TimeUtils;
 import android.view.Display;
 import android.view.WindowManagerPolicy;
 
+import android.provider.Settings;
+import android.os.UserHandle;
+
 import java.io.PrintWriter;
 
 /**

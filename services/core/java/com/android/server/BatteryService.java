@@ -850,7 +850,7 @@ public final class BatteryService extends SystemService {
             // Does the Device have segmented battery LED support? In this case, we send the level
             // in the alpha channel of the color and let the HAL sort it out.
             mUseSegmentedBatteryLed = context.getResources().getBoolean(
-                    org.cyanogenmod.platform.internal.R.bool.config_useSegmentedBatteryLed);
+                    com.android.internal.R.bool.config_useSegmentedBatteryLed);
         }
 
         /**
