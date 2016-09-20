@@ -6945,6 +6945,12 @@ public final class Settings {
          * @hide
          */
         public static final String VOLUME_LINK_NOTIFICATION = "volume_link_notification";
+		
+		/**
+         * Whether to use one tap tile action to enable or disable data
+         * @hide
+         */
+        public static final String QS_DATA_ADVANCED = "qs_data_advanced";
 
         /**
          * This are the settings to be backed up.
