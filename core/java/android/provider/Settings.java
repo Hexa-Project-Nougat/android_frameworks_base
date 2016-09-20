@@ -6993,6 +6993,12 @@ public final class Settings {
         */
        public static final String FORCE_AUTHORIZE_SUBSTRATUM_PACKAGES = "force_authorize_substratum_packages";
 
+		/**
+         * Whether to use one tap tile action to enable or disable data
+         * @hide
+         */
+        public static final String QS_DATA_ADVANCED = "qs_data_advanced";
+
         /**
          * This are the settings to be backed up.
          *
