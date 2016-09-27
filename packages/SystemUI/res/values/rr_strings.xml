@@ -70,5 +70,8 @@
     <string name="omnijaws_package_not_available">OmniJaws not available</string>
 
     <string name="recents_custom_android_n">CLEAR ALL</string>
+	
+	<!-- Hexa Configuration Tile -->
+	<string name="kdp_qs_title">Hexa Configurations</string>
 
 </resources>
