@@ -4069,6 +4069,13 @@ public final class Settings {
          * @hide
          */
         public static final String SHOW_ALARM_FULLSCREEN = "show_alarm_fullscreen";
+		
+        /**
+         * Whether to vibrate when quick settings tile is pressed.
+         *
+         * @hide
+         */
+        public static final String QUICK_SETTINGS_TILES_VIBRATE = "quick_settings_vibrate";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
