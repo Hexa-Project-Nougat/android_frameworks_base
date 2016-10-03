@@ -36,4 +36,8 @@
     <color name="battery_background">#ffffff</color>
     <color name="status">#ffffff</color>
 
+    <!-- Transparency Porn -->
+    <color name="system_primary_color">@*android:color/material_pixel_blue_dark</color>
+    <color name="system_secondary_color">@*android:color/material_pixel_blue_light</color>
+    <color name="system_accent_color">@*android:color/material_pixel_blue_bright</color>
 </resources>
