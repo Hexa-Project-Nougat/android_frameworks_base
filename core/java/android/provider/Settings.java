@@ -6980,6 +6980,12 @@ public final class Settings {
         public static final String QS_COLUMNS = "qs_columns";
 
         /**
+         * Count of small QS tiles.
+         * @hide
+         */
+        public static final String QQS_COUNT = "sysui_qqs_count";
+
+        /**
          * This are the settings to be backed up.
          *
          * NOTE: Settings are backed up and restored in the order they appear
