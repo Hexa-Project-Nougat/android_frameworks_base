@@ -708,6 +708,17 @@ final class DefaultPermissionGrantPolicy {
                 grantRuntimePermissionsLPw(setupwizardPackage, PHONE_PERMISSIONS, userId);
                 grantRuntimePermissionsLPw(setupwizardPackage, LOCATION_PERMISSIONS, userId);
                 grantRuntimePermissionsLPw(setupwizardPackage, CAMERA_PERMISSIONS, userId);
+            }
+
+            // Project Fi
+            PackageParser.Package fiPackage = getDefaultProviderAuthorityPackageLPr(
+                    "com.google.android.apps.tycho", userId);
+            if (fiPackage != null) {
+                grantRuntimePermissionsLPw(fiPackage, CONTACTS_PERMISSIONS, userId);
+                grantRuntimePermissionsLPw(fiPackage, PHONE_PERMISSIONS, userId);
+		grantRuntimePermissionsLPw(fiPackage, MICROPHONE_PERMISSIONS, userId);
+                grantRuntimePermissionsLPw(fiPackage, LOCATION_PERMISSIONS, userId);
+                grantRuntimePermissionsLPw(fiPackage, SMS_PERMISSIONS, userId);
             }	
 
 			// Google Play Store
