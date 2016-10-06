@@ -583,7 +583,11 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
                 getColor(R.color.status_bar_clock_color)) {
         mCarrierLabel.setTextColor(mIconTint);
         }
+        if (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_WEATHER_COLOR, 0xFFFFFFFF,
+                UserHandle.USER_CURRENT) == 0xFFFFFFFF) {
         mWeather.setTextColor(mIconTint);
+		}
     }
 
     public void appTransitionPending() {
