@@ -7945,6 +7945,13 @@ public final class Settings {
          * @hide
          */
         public static final String WEB_ACTION_ENABLED = "web_action_enabled";
+		
+        /**
+         * Disable expanding quick settings on secure lock screens
+         *
+         * @hide
+         */
+        public static final String LOCK_QS_DISABLED = "lockscreen_qs_disabled";
 
         /**
          * This are the settings to be backed up.
