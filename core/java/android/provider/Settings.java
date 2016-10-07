@@ -7938,6 +7938,13 @@ public final class Settings {
          * @hide
          */
         public static final String QQS_COUNT = "sysui_qqs_count";
+		
+        /**
+         * Disable expanding quick settings on secure lock screens
+         *
+         * @hide
+         */
+        public static final String LOCK_QS_DISABLED = "lockscreen_qs_disabled";
 
         /**
          * This are the settings to be backed up.
