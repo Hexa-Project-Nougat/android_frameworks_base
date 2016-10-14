@@ -147,9 +147,8 @@ import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.utils.du.ActionHandler;
 import com.android.internal.utils.du.DUPackageMonitor;
 import com.android.internal.utils.du.DUSystemReceiver;
-import com.android.internal.util.cm.WeatherControl;
-import com.android.internal.util.cm.WeatherControllerImp;
-import com.android.internal.util.cm.WeatherControl.WeatherInfo;
+import com.android.systemui.statusbar.policy.WeatherController;
+import com.android.systemui.statusbar.policy.WeatherController.WeatherInfo;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
@@ -252,12 +251,13 @@ import java.util.List;
 import java.util.Map;
 
 import cyanogenmod.providers.CMSettings;
+import cyanogenmod.weather.util.WeatherUtils;
 
 import static android.service.notification.NotificationListenerService.Ranking.importanceToLevel;
 
 public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         DragDownHelper.DragDownCallback, ActivityStarter, OnUnlockMethodChangedListener,
-        HeadsUpManager.OnHeadsUpChangedListener, TunerService.Tunable, WeatherControl.Callback {
+        HeadsUpManager.OnHeadsUpChangedListener, TunerService.Tunable, WeatherController.Callback {
 			
     static final String TAG = "PhoneStatusBar";
     public static final boolean DEBUG = BaseStatusBar.DEBUG;
@@ -473,7 +473,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private int mWeatherTempColor;
     private int mWeatherTempSize;
     private int mWeatherTempFontStyle = FONT_NORMAL;
-    private WeatherControllerImp mWeatherController1;
 
     int mPixelFormat;
     Object mQueueLock = new Object();
@@ -763,20 +762,33 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
          }
      }
 	 
-  private void updateWeatherTextState(String temp, int size, int font ,int color) {
-        if (mWeatherTempState == 0 || TextUtils.isEmpty(temp)) {
+  private void updateWeatherTextState(Double temp, int size, int font ,int color) {
+        if (mWeatherTempState == 0 || Double.isNaN(temp)) {
 			mWeatherTempView = (TextView) mStatusBarView.findViewById(R.id.weather_temp);
-            mWeatherTempView.setVisibility(View.GONE);
-            return;
+			mWeatherTempView.setVisibility(View.GONE);
+			return;
+        }
+        if (temp == null) {
+        	mWeatherTempView = (TextView) mStatusBarView.findViewById(R.id.weather_temp);
+        	mWeatherTempView.setText("");
+        }
+        double temp1 = Math.round(temp);
+        String scale = Double.toString(temp1);
+        String Condition = "";
+        String Scale ="";
+        mWeatherTempView = (TextView) mStatusBarView.findViewById(R.id.weather_temp); 
+        if (mWeatherTempView == null || mWeatherController.getWeatherInfo().condition == null) {
+            	mWeatherTempView.setVisibility(View.GONE);
         }
         if (mWeatherTempState == 1) {
-            SpannableString span = new SpannableString(temp);
-            span.setSpan(new RelativeSizeSpan(0.7f), temp.length() - 1, temp.length(), 0);
-            mWeatherTempView.setText(span);
+            	mWeatherTempView.setText(mContext.getString(
+            	R.string.status_bar_weather_format,
+	            WeatherUtils.formatTemperature(mWeatherController.getWeatherInfo().temp, mWeatherController.getWeatherInfo().tempUnit),
+	            Condition));
         } else if (mWeatherTempState == 2) {
-            mWeatherTempView.setText(temp.substring(0, temp.length() - 1));
+            	mWeatherTempView.setText(scale);
         }
-		mWeatherTempView.setTextColor(color);
+        mWeatherTempView.setTextColor(color);
         mWeatherTempView.setTextSize(size);
         switch (font) {
             case FONT_NORMAL:
@@ -863,7 +875,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mWeatherTempView != null) {
             mWeatherTempView.setVisibility(View.GONE);
                 mWeatherTempView = (TextView) mStatusBarView.findViewById(R.id.weather_temp);
-	    		updateWeatherTextState(mWeatherController1.getWeatherInfo().temp,
+	    		updateWeatherTextState(mWeatherController.getWeatherInfo().temp,
                     mWeatherTempSize, mWeatherTempFontStyle,mWeatherTempColor);
         }
     }
@@ -1428,20 +1440,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mWeatherTempColor = Settings.System.getIntForUser(mContext.getContentResolver(),
                     Settings.System.STATUS_BAR_WEATHER_COLOR, 0xFFFFFFFF, mCurrentUserId);
         mWeatherController = new WeatherControllerImpl(mContext);
-		mWeatherTempView = (TextView) mStatusBarView.findViewById(R.id.weather_temp);
 
-		if (mWeatherController1 == null) {
-		mWeatherController1 = new WeatherControllerImp(mContext);
-		}
 		updateTempView();
-		mWeatherController1.addCallback(new WeatherControl.Callback() {
+		mWeatherController.addCallback(new WeatherController.Callback() {
             @Override
             public void onWeatherChanged(WeatherInfo temp) {
                 updateWeatherTextState(temp.temp, mWeatherTempSize, mWeatherTempFontStyle, mWeatherTempColor);
             }
         });
-        updateWeatherTextState(mWeatherController1.getWeatherInfo().temp,
-                mWeatherTempSize, mWeatherTempFontStyle, mWeatherTempColor);
+        updateWeatherTextState(mWeatherController.getWeatherInfo().temp,
+mWeatherTempSize, mWeatherTempFontStyle, mWeatherTempColor);
 
         mStatusBarHeaderMachine = new StatusBarHeaderMachine(mContext);
 
@@ -1605,13 +1613,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     @Override
-    public void onWeatherChanged(WeatherControl.WeatherInfo info) {
+    public void onWeatherChanged(WeatherController.WeatherInfo info) {
         SettingsObserver observer = new SettingsObserver(mHandler);
-        if (info.temp == null || info.condition == null) {
-            mWeatherTempView.setText(null);
-           observer.update();
+        if (Double.isNaN(info.temp)  || info.condition == null) {
+            mWeatherTempView.setText("");
+            observer.update();
         } else {
-            mWeatherTempView.setText(info.temp);
+            mWeatherTempView.setText((mContext.getString(
+                    R.string.status_bar_weather_format,
+                    WeatherUtils.formatTemperature(info.temp, info.tempUnit),
+                    info.condition)));
             observer.update();
         }
       }
