@@ -20,10 +20,14 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.os.RemoteException;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.android.internal.R;
+import com.android.internal.utils.du.DUActionUtils;
 
 /**
  *  Helper to manage showing/hiding a image to notify them that they are entering
@@ -39,6 +43,12 @@ public class LockTaskNotify {
     public LockTaskNotify(Context context) {
         mContext = context;
         mHandler = new H();
+    }
+
+    private boolean hasNavigationBar() {
+        return DUActionUtils.hasNavbarByDefault(mContext)
+                || Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                        Settings.Secure.NAVIGATION_BAR_VISIBLE, 0, UserHandle.USER_CURRENT) == 1;
     }
 
     public void showToast(int lockTaskModeState) {
