@@ -323,8 +323,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             "system:" + Settings.System.SCREEN_BRIGHTNESS_MODE;
     private static final String STATUS_BAR_BRIGHTNESS_CONTROL =
             "cmsystem:" + CMSettings.System.STATUS_BAR_BRIGHTNESS_CONTROL;
-    private static final String NAVBAR_LEFT_IN_LANDSCAPE =
-            "cmsystem:" + CMSettings.System.NAVBAR_LEFT_IN_LANDSCAPE;
     private static final String LOCKSCREEN_MEDIA_METADATA =
             "cmsecure:" + CMSettings.Secure.LOCKSCREEN_MEDIA_METADATA;
 
@@ -533,56 +531,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
              resolver.unregisterContentObserver(this);
          }
      }
-
-    class DevForceNavbarObserver extends ContentObserver {
-        DevForceNavbarObserver(Handler handler) {
-            super(handler);
-        }
-
-        void observe() {
-            ContentResolver resolver = mContext.getContentResolver();
-            resolver.registerContentObserver(CMSettings.Global.getUriFor(
-                    CMSettings.Global.DEV_FORCE_SHOW_NAVBAR), false, this, UserHandle.USER_ALL);
-
-            CurrentUserTracker userTracker = new CurrentUserTracker(mContext) {
-                @Override
-                public void onUserSwitched(int newUserId) {
-                    update();
-                }
-            };
-            userTracker.startTracking();
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            super.onChange(selfChange);
-            update();
-        }
-
-        private void update() {
-            boolean visible = CMSettings.Global.getIntForUser(mContext.getContentResolver(),
-                    CMSettings.Global.DEV_FORCE_SHOW_NAVBAR, 0, UserHandle.USER_CURRENT) == 1;
-
-            if (visible) {
-                forceAddNavigationBar();
-            } else {
-                removeNavigationBar();
-            }
-        }
-    }
-
-    private void forceAddNavigationBar() {
-        // If we have no Navbar view and we should have one, create it
-        if (mNavigationBarView != null) {
-            return;
-        }
-
-        mNavigationBarView =
-                (NavigationBarView) View.inflate(mContext, R.layout.navigation_bar, null);
-
-        mNavigationBarView.setDisabledFlags(mDisabled1);
-        addNavigationBar();
-    }
 
     // ensure quick settings is disabled until the current user makes it through the setup wizard
     private boolean mUserSetup = false;
@@ -863,20 +811,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         addNavigationBar();
 
-        // Developer options - Force Navigation bar
-        try {
-            boolean needsNav = mWindowManagerService.needsNavigationBar();
-            if (!needsNav) {
-                final DevForceNavbarObserver observer = new DevForceNavbarObserver(mHandler);
-                observer.observe();
-            }
-        } catch (RemoteException ex) {
-            // no window manager? good luck with that
-        }
-
         TunerService.get(mContext).addTunable(this,
                 SCREEN_BRIGHTNESS_MODE,
-                NAVBAR_LEFT_IN_LANDSCAPE,
                 STATUS_BAR_BRIGHTNESS_CONTROL,
                 LOCKSCREEN_MEDIA_METADATA);
 
@@ -1662,14 +1598,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         prepareNavigationBarView();
 
         mWindowManager.addView(mNavigationBarView, getNavigationBarLayoutParams());
-    }
-
-    private void removeNavigationBar() {
-        if (DEBUG) Log.d(TAG, "removeNavigationBar: about to remove " + mNavigationBarView);
-        if (mNavigationBarView == null) return;
-
-        mWindowManager.removeView(mNavigationBarView);
-        mNavigationBarView = null;
     }
 
     protected void repositionNavigationBar() {
@@ -5630,13 +5558,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             case SCREEN_BRIGHTNESS_MODE:
                 mAutomaticBrightness = newValue != null && Integer.parseInt(newValue)
                         == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
-                break;
-            case NAVBAR_LEFT_IN_LANDSCAPE:
-                if (mNavigationBarView != null) {
-                    final boolean navLeftInLandscape = newValue != null &&
-                            Integer.parseInt(newValue) == 1;
-                    mNavigationBarView.setLeftInLandscape(navLeftInLandscape);
-                }
                 break;
             case STATUS_BAR_BRIGHTNESS_CONTROL:
                 mBrightnessControl = newValue != null && Integer.parseInt(newValue) == 1;
