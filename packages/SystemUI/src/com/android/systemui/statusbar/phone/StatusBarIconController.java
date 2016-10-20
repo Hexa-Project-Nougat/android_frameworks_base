@@ -19,8 +19,10 @@ package com.android.systemui.statusbar.phone;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.ContentResolver;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Icon;
@@ -28,6 +30,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.os.UserHandle;
+import android.net.Uri;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.ArraySet;
 import android.util.TypedValue;
@@ -84,6 +88,7 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
     private View mCenterClockLayout;
 
     private TextView mCarrierLabel;
+    private int mCarrierLabelMode;
 
     private int mIconSize;
     private int mIconHPadding;
@@ -149,6 +154,9 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
         mHandler = new Handler();
         mClockController = new ClockController(statusBar, mNotificationIconAreaController, mHandler);
         mCenterClockLayout = statusBar.findViewById(R.id.center_clock_layout);
+        SettingsObserver settingsObserver = new SettingsObserver(mHandler);
+        settingsObserver.observe();
+        carrierLabelVisibility();
         loadDimens();
 
         mBatteryLevelView = (BatteryLevelTextView) statusBar.findViewById(R.id.battery_level);
@@ -332,6 +340,7 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
 
     public void updateNotificationIcons(NotificationData notificationData) {
         mNotificationIconAreaController.updateNotificationIcons(notificationData);
+        carrierLabelVisibility();
     }
 
     public void hideSystemIconArea(boolean animate) {
@@ -653,5 +662,77 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
 
     private void updateBatteryLevelText() {
         FontSizeUtils.updateFontSize(mBatteryLevelView, R.dimen.battery_level_text_size);
+    }
+	
+    public void carrierLabelVisibility() {
+        final ContentResolver resolver = mContext.getContentResolver();
+
+        mCarrierLabelMode = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUS_BAR_SHOW_CARRIER, 1, UserHandle.USER_CURRENT);
+
+        boolean mUserDisabledStatusbarCarrier = false;
+
+        if (mCarrierLabelMode == 0 || mCarrierLabelMode == 1) {
+            mUserDisabledStatusbarCarrier = true;
+        }
+
+        boolean hideCarrier = Settings.System.getInt(resolver,
+                Settings.System.HIDE_CARRIER_MAX_SWITCH, 0) == 1;
+
+        int maxAllowedIcons = Settings.System.getInt(resolver,
+                Settings.System.HIDE_CARRIER_MAX_NOTIFICATION, 1);
+
+        boolean forceHideByNumberOfIcons = false;
+        int currentVisibleNotificationIcons = 0;
+
+        if (mNotificationIconAreaController != null) {
+            currentVisibleNotificationIcons = mNotificationIconAreaController.getNotificationIconsCount();
+        }
+
+        if (mCarrierLabelMode == 2 || mCarrierLabelMode == 3) {
+            if (hideCarrier && currentVisibleNotificationIcons >= maxAllowedIcons) {
+               forceHideByNumberOfIcons = true;
+            }
+        }
+
+        if (mCarrierLabel != null) {
+            if (!forceHideByNumberOfIcons && !mUserDisabledStatusbarCarrier ) {
+               mCarrierLabel.setVisibility(View.VISIBLE);
+            } else {
+               mCarrierLabel.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    public int getCurrentVisibleNotificationIcons() {
+        return mNotificationIconAreaController.getNotificationIconsCount();
+    }
+
+    class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+    }
+
+    void observe() {
+         ContentResolver resolver = mContext.getContentResolver();
+         resolver.registerContentObserver(Settings.System
+                 .getUriFor(Settings.System.HIDE_CARRIER_MAX_SWITCH),
+                 false, this, UserHandle.USER_CURRENT);
+         resolver.registerContentObserver(Settings.System
+                 .getUriFor(Settings.System.HIDE_CARRIER_MAX_NOTIFICATION),
+                 false, this, UserHandle.USER_CURRENT);
+    }
+
+    @Override
+    public void onChange(boolean selfChange, Uri uri) {
+        super.onChange(selfChange, uri);
+
+        if (uri.equals(Settings.System.getUriFor(
+            Settings.System.HIDE_CARRIER_MAX_SWITCH))
+            || uri.equals(Settings.System.getUriFor(
+            Settings.System.HIDE_CARRIER_MAX_NOTIFICATION))) {
+            carrierLabelVisibility();
+            }
+        }
     }
 }
