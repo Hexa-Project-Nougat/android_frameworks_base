@@ -17,4 +17,25 @@
         <item name="android:divider">@null</item>
     </style>
 
+    <!-- Fonts used in the MediaQueue -->
+    <style name="TextAppearance.MediaQueue">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">roboto-regular</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="TextAppearance.MediaQueue.Title">
+        <item name="android:alpha">.87</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="TextAppearance.MediaQueue.Subtitle">
+        <item name="android:alpha">.38</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextAppearance.StatusBar.PhoneTicker"
+        parent="@*android:style/TextAppearance.StatusBar.Ticker">
+        <!-- Note: must be dp to fit in status bar -->
+        <item name="android:textSize">14dp</item>
+    </style>
+
 </resources>
