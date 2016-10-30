@@ -4529,6 +4529,12 @@ public final class Settings {
          */
         public static final String QS_MULTIUSER_SWITCH_TOGGLE = "qs_multiuser_switch_toggle";
 
+          /**
+          * Whether to show the negociated charger current in the lockscreen
+          * @hide
+          */
+         public static final String LOCKSCREEN_CHARGING_CURRENT = "lockscreen_charging_current";
+ 
         /**
          * Whether to show or hide the expand indicator
          * @hide
