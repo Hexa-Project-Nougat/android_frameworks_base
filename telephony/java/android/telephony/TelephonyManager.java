@@ -1684,16 +1684,6 @@ public class TelephonyManager {
         }
     }
     /**
-     * {@hide}
-     */
-    public void toggleLTE(boolean on) {
-        try {
-            getITelephony().toggleLTE(on);
-        } catch (RemoteException e) {
-            //Silently fail
-        }
-    }
-    /**
      * Network Class Definitions.
      * Do not change this order, it is used for sorting during emergency calling in
      * {@link TelephonyConnectionService#getFirstPhoneForEmergencyCall()}. Any newer technologies
