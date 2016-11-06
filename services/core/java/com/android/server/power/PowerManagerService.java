@@ -512,8 +512,6 @@ public final class PowerManagerService extends SystemService
     private static native void nativeSetAutoSuspend(boolean enable);
     private static native void nativeSendPowerHint(int hintId, int data);
     private static native void nativeSetFeature(int featureId, int data);
-	
-	private boolean mForceNavbar;
 
     public PowerManagerService(Context context) {
         super(context);
@@ -675,9 +673,6 @@ public final class PowerManagerService extends SystemService
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.WAKE_WHEN_PLUGGED_OR_UNPLUGGED),
                     false, mSettingsObserver, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.Secure.getUriFor(
-                    Settings.Secure.NAVIGATION_BAR_VISIBLE),
-                    false, mSettingsObserver, UserHandle.USER_ALL);
             IVrManager vrManager =
                     (IVrManager) getBinderService(VrManagerService.VR_MANAGER_BINDER_SERVICE);
             try {
@@ -685,7 +680,6 @@ public final class PowerManagerService extends SystemService
             } catch (RemoteException e) {
                 Slog.e(TAG, "Failed to register VR mode state listener: " + e);
             }
-
             // Go.
             readConfigurationLocked();
             updateSettingsLocked();
@@ -809,8 +803,6 @@ public final class PowerManagerService extends SystemService
             updateLowPowerModeLocked();
         }
 
-        mForceNavbar = Settings.Secure.getIntForUser(resolver,
-                Settings.Secure.NAVIGATION_BAR_VISIBLE, 0, UserHandle.USER_CURRENT) == 1;
         mDirty |= DIRTY_SETTINGS;
     }
 

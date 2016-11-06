@@ -69,12 +69,4 @@ interface IStatusBarService
     void handleSystemNavigationKey(in int key);
 
     void setAutoRotate(boolean enabled);
-
-    // Start DU methods
-    void toggleRecentApps();
-    void toggleSplitScreen();
-    void preloadRecentApps();
-    void cancelPreloadRecentApps();
-    void startAssist(in Bundle args);
-    void screenPinningStateChanged(boolean enabled);
 }
