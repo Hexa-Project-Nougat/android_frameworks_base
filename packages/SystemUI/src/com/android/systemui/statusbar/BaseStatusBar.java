@@ -281,8 +281,6 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     protected boolean mVrMode;
 
-    protected boolean mScreenPinningEnabled;
-
     @Override  // NotificationData.Environment
     public boolean isDeviceProvisioned() {
         return mDeviceProvisioned;
@@ -1331,11 +1329,7 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     @Override
     public void screenPinningStateChanged(boolean enabled) {
-        if (mScreenPinningEnabled != enabled) {
-            mScreenPinningEnabled = enabled;
-        }
-        if (DEBUG)
-            Log.d(TAG, "StatusBar API screenPinningStateChanged = " + enabled);
+        Log.d(TAG, "StatusBar API screenPinningStateChanged = " + enabled);
     }
 
     protected H createHandler() {
@@ -1393,10 +1387,8 @@ public abstract class BaseStatusBar extends SystemUI implements
 	
     protected void showRecents(boolean triggeredFromAltTab, boolean fromHome) {
         if (isOmniSwitchEnabled()) {
-            if (!mScreenPinningEnabled) {
-                Intent showIntent = new Intent(OmniSwitchConstants.ACTION_SHOW_OVERLAY);
-                mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
-            }
+            Intent showIntent = new Intent(OmniSwitchConstants.ACTION_SHOW_OVERLAY);
+            mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
         } else {
 			if (mRecents != null) {
 				sendCloseSystemWindows(SYSTEM_DIALOG_REASON_RECENT_APPS);
@@ -1407,10 +1399,8 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     protected void hideRecents(boolean triggeredFromAltTab, boolean triggeredFromHomeKey) {
         if (isOmniSwitchEnabled()) {
-            if (!mScreenPinningEnabled) {
-                Intent showIntent = new Intent(OmniSwitchConstants.ACTION_HIDE_OVERLAY);
-                mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
-            }
+            Intent showIntent = new Intent(OmniSwitchConstants.ACTION_HIDE_OVERLAY);
+            mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
         } else if (mRecents != null) {
             mRecents.hideRecents(triggeredFromAltTab, triggeredFromHomeKey);
         }
@@ -1418,10 +1408,8 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     protected void toggleRecents() {
         if (isOmniSwitchEnabled()) {
-            if (!mScreenPinningEnabled) {
-                Intent showIntent = new Intent(OmniSwitchConstants.ACTION_TOGGLE_OVERLAY);
-                mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
-            }
+            Intent showIntent = new Intent(OmniSwitchConstants.ACTION_TOGGLE_OVERLAY);
+            mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
         } else if (mRecents != null) {
             mRecents.toggleRecents(mDisplay);
         }
