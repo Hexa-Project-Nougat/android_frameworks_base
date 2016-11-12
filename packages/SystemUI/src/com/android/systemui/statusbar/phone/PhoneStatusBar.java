@@ -125,6 +125,7 @@ import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.net.Uri;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.MetricsProto.MetricsEvent;
@@ -464,6 +465,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private int mNavigationIconHints = 0;
     private HandlerThread mHandlerThread;
+	
+    // Max Lockscreen Notification count
+    private int mMaxKeyguardNotifConfig;
+    private boolean mCustomMaxKeyguard;
 
     Runnable mLongPressBrightnessChange = new Runnable() {
         @Override
@@ -473,6 +478,31 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mLinger = BRIGHTNESS_CONTROL_LINGER_THRESHOLD + 1;
         }
     };
+	
+    private class SettingsObserver extends ContentObserver {
+         SettingsObserver(Handler handler) {
+             super(handler);
+         }
+
+         protected void observe() {
+             ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCKSCREEN_MAX_NOTIF_CONFIG),
+                    false, this, UserHandle.USER_ALL);
+             update();
+         }
+		
+         public void update() {
+             ContentResolver resolver = mContext.getContentResolver();
+            mMaxKeyguardNotifConfig = Settings.System.getIntForUser(resolver,
+                    Settings.System.LOCKSCREEN_MAX_NOTIF_CONFIG, 5, mCurrentUserId);
+         }
+
+         protected void unobserve() {
+             ContentResolver resolver = mContext.getContentResolver();
+             resolver.unregisterContentObserver(this);
+         }
+     }
 
     class DevForceNavbarObserver extends ContentObserver {
         DevForceNavbarObserver(Handler handler) {
@@ -799,6 +829,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 = (MediaSessionManager) mContext.getSystemService(Context.MEDIA_SESSION_SERVICE);
         // TODO: use MediaSessionManager.SessionListener to hook us up to future updates
         // in session state
+		
+		SettingsObserver observer = new SettingsObserver(mHandler);
+        observer.observe();
 
         addNavigationBar();
 
@@ -4857,13 +4890,23 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     @Override
     protected int getMaxKeyguardNotifications(boolean recompute) {
+        mCustomMaxKeyguard = Settings.System.getIntForUser(mContext.getContentResolver(),
+            Settings.System.LOCK_SCREEN_CUSTOM_NOTIF, 0, UserHandle.USER_CURRENT) == 1;
         if (recompute) {
             mMaxKeyguardNotifications = Math.max(1,
                     mNotificationPanel.computeMaxKeyguardNotifications(
                             mMaxAllowedKeyguardNotifications));
-            return mMaxKeyguardNotifications;
+	        if (mCustomMaxKeyguard) {
+	            return mMaxKeyguardNotifConfig;
+	        } else {
+	            return mMaxKeyguardNotifications;
+	        } 
         }
-        return mMaxKeyguardNotifications;
+        if (mCustomMaxKeyguard) {
+            return mMaxKeyguardNotifConfig;
+        } else {
+            return mMaxKeyguardNotifications;
+        }  
     }
 
     public int getMaxKeyguardNotifications() {
