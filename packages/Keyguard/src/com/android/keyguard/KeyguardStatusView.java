@@ -403,27 +403,13 @@ public class KeyguardStatusView extends GridLayout implements
         mWeatherConditionText.setTextColor(primaryTextColor);
         mWeatherCurrentTemp.setTextColor(secondaryTextColor);
 
-       	if (mIconNameValue != iconNameValue) {
-               mIconNameValue = iconNameValue;
-               mWeatherController.updateWeather();
-           }
-
-           if (mWeatherConditionImage != null) {
-               mWeatherConditionImage.setImageDrawable(null);
-           }
-
-           Drawable weatherIcon = mWeatherConditionDrawable;
-           if (mWIconColor == -2) {
-               if (mWeatherConditionImage != null) {
-                   mWeatherConditionImage.setImageDrawable(weatherIcon);
-               }
-           } else {
-               Bitmap coloredWeatherIcon =
-                       ImageHelper.getColoredBitmap(weatherIcon, mWIconColor);
-               if (mWeatherConditionImage != null) {
-                   mWeatherConditionImage.setImageBitmap(coloredWeatherIcon);
-               }
-           }
+        if (mIconNameValue != iconNameValue) {
+            mIconNameValue = iconNameValue;
+            mWeatherController.updateWeather();
+        }
+        mWeatherConditionImage.setImageDrawable(null);
+        Drawable weatherIcon = mWeatherConditionDrawable;
+        mWeatherConditionImage.setImageDrawable(weatherIcon);
    	}
 
     // DateFormat.getBestDateTimePattern is extremely expensive, and refresh is called often.
