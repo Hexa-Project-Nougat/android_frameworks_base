@@ -40,6 +40,7 @@ import android.view.Display;
 import android.widget.TextView;
 
 import com.android.systemui.DemoMode;
+import com.android.systemui.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

@@ -448,7 +448,7 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
 	
     private void setFullScreen() {
         boolean isPrimary = UserHandle.getCallingUserId() == UserHandle.USER_OWNER;
-        int immersiveRecents = isPrimary ? getImmersiveRecents() : 0;
+        int immersiveRecents = isPrimary ? getFullRecents() : 0;
 
         switch (immersiveRecents) {
             case 0:
