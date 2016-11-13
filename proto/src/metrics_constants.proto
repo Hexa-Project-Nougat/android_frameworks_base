@@ -2260,5 +2260,7 @@ message MetricsEvent {
 	
 	// Hexa-Project
 	KANGDROID = 505
+	
+	QUICK_SETTINGS = 506;
   }
 }
