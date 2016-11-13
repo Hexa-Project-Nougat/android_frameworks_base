@@ -2218,5 +2218,7 @@ message MetricsEvent {
 
     // HexaProject
     KANGDROID = 496;
+	
+	QUICK_SETTINGS = 497;
   }
 }
