@@ -91,7 +91,6 @@ import com.android.systemui.recents.misc.SystemServicesProxy;
 import com.android.systemui.recents.misc.Utilities;
 import com.android.systemui.recents.model.Task;
 import com.android.systemui.recents.model.TaskStack;
-import com.android.systemui.recents.views.RecentsView;
 
 import java.io.PrintWriter;
 import java.lang.annotation.Retention;
@@ -205,8 +204,6 @@ public class TaskStackView extends FrameLayout implements TaskStack.TaskStackCal
     private boolean mResetToInitialStateWhenResized;
     private int mLastWidth;
     private int mLastHeight;
-	
-	RecentsView mView;
 
     // A convenience update listener to request updating clipping of tasks
     private ValueAnimator.AnimatorUpdateListener mRequestUpdateClippingListener =
@@ -1770,9 +1767,6 @@ public class TaskStackView extends FrameLayout implements TaskStack.TaskStackCal
 
                 // Remove all tasks and delete the task data for all tasks
                 mStack.removeAllTasks();
-                        if (mView != null) {
-                            mView.updateMemoryStatus();
-                        }
                 for (int i = tasks.size() - 1; i >= 0; i--) {
                     EventBus.getDefault().send(new DeleteTaskDataEvent(tasks.get(i)));
                 }
