@@ -96,7 +96,6 @@ import com.android.systemui.recents.misc.SystemServicesProxy;
 import com.android.systemui.recents.misc.Utilities;
 import com.android.systemui.recents.model.Task;
 import com.android.systemui.recents.model.TaskStack;
-import com.android.systemui.recents.views.RecentsView;
 
 import com.android.systemui.recents.views.grid.GridTaskView;
 import com.android.systemui.recents.views.grid.TaskGridLayoutAlgorithm;
@@ -213,8 +212,6 @@ public class TaskStackView extends FrameLayout implements TaskStack.TaskStackCal
     private boolean mResetToInitialStateWhenResized;
     private int mLastWidth;
     private int mLastHeight;
-	
-	RecentsView mView;
 
     // We keep track of the task view focused by user interaction and draw a frame around it in the
     // grid layout.
@@ -1831,9 +1828,6 @@ public class TaskStackView extends FrameLayout implements TaskStack.TaskStackCal
 
                 // Remove all tasks and delete the task data for all tasks
                 mStack.removeAllTasks();
-                        if (mView != null) {
-                            mView.updateMemoryStatus();
-                        }
                 for (int i = tasks.size() - 1; i >= 0; i--) {
                     Task t = tasks.get(i);
                     if (Recents.sLockedTasks.contains(t)) continue;
