@@ -660,6 +660,15 @@ final class DefaultPermissionGrantPolicy {
                     && doesPackageSupportRuntimePermissions(storageManagerPckg)) {
                 grantRuntimePermissionsLPw(storageManagerPckg, STORAGE_PERMISSIONS, true, userId);
             }
+			
+            // cLock
+            PackageParser.Package cLockPackage = getDefaultProviderAuthorityPackageLPr(
+                    "com.cyanogenmod.lockclock", userId);
+            if (cLockPackage != null) {
+                grantRuntimePermissionsLPw(cLockPackage, CALENDAR_PERMISSIONS, userId);
+		        grantRuntimePermissionsLPw(cLockPackage, LOCATION_PERMISSIONS, userId);
+            }
+			
             mService.mSettings.onDefaultRuntimePermissionsGrantedLPr(userId);
         }
     }
