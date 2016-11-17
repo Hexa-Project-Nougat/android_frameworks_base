@@ -53,11 +53,6 @@
     <string name="accessibility_quick_settings_nfc_on">NFC on.</string>
     <string name="accessibility_quick_settings_nfc_changed_off">NFC turned off.</string>
     <string name="accessibility_quick_settings_nfc_changed_on">NFC turned on.</string>
-    <string name="quick_settings_navigation_bar">Navigation bar</string>
-    <string name="quick_settings_smartbar">SmartBar</string>
-    <string name="quick_settings_smartbar_off">SmartBar off</string>
-    <string name="quick_settings_fling">Fling</string>
-    <string name="quick_settings_fling_off">Fling off</string>
 
     <!-- PA Pie controls -->
     <string name="pie_date_format" translatable="false">ccc, dd MMM yyyy</string>
