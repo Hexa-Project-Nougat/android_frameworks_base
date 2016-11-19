@@ -91,6 +91,7 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
     private int mCarrierLabelMode;
 
 	private TextView mWeather;
+	private TextView mWeatherLeft;
 
     private int mIconSize;
     private int mIconHPadding;
@@ -152,8 +153,10 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
 
         mDarkModeIconColorSingleTone = context.getColor(R.color.dark_mode_icon_color_single_tone);
         mLightModeIconColorSingleTone = context.getColor(R.color.light_mode_icon_color_single_tone);
+
         mCarrierLabel = (TextView) statusBar.findViewById(R.id.statusbar_carrier_text);
 		mWeather = (TextView) statusBar.findViewById(R.id.weather_temp);
+		mWeatherLeft = (TextView) statusBar.findViewById(R.id.left_weather_temp);
         mHandler = new Handler();
         mClockController = new ClockController(statusBar, mNotificationIconAreaController, mHandler);
         mCenterClockLayout = statusBar.findViewById(R.id.center_clock_layout);
@@ -354,6 +357,11 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
                 UserHandle.USER_CURRENT) == 2) {
         animateHide(mCarrierLabel,animate);
         }
+        if (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE, 0,
+                UserHandle.USER_CURRENT) == 1) {
+        animateHide(mWeatherLeft,animate);
+        } 
     }
 
     public void showSystemIconArea(boolean animate) {
@@ -363,6 +371,11 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
                 Settings.System.STATUS_BAR_SHOW_CARRIER,  0,
                 UserHandle.USER_CURRENT) == 2) {
         animateShow(mCarrierLabel,animate);
+        }
+        if (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE, 0,
+                UserHandle.USER_CURRENT) == 1) {
+        animateShow(mWeatherLeft,animate);
         }
     }
 
@@ -587,6 +600,7 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
                 Settings.System.STATUS_BAR_WEATHER_COLOR, 0xFFFFFFFF,
                 UserHandle.USER_CURRENT) == 0xFFFFFFFF) {
         mWeather.setTextColor(mIconTint);
+		mWeatherLeft.setTextColor(mIconTint);
 		}
     }
 
