@@ -470,6 +470,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     // Weather temperature
     private TextView mWeatherTempView;
+    private TextView mWeatherTempLeft;
     private int mWeatherTempState;
     private int mWeatherTempStyle;
     private int mWeatherTempColor;
@@ -691,6 +692,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			resolver.registerContentObserver(Settings.System.getUriFor(
 					Settings.System.STATUS_BAR_WEATHER_COLOR),
 					false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE),
+                    false, this, UserHandle.USER_ALL);
              update();
          }
 		
@@ -716,7 +720,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 	  					|| uri.equals(Settings.System.getUriFor(
 					Settings.System.STATUS_BAR_WEATHER_FONT_STYLE))
 					|| uri.equals(Settings.System.getUriFor(
-					Settings.System.STATUS_BAR_WEATHER_COLOR))) {
+            		Settings.System.STATUS_BAR_WEATHER_COLOR))            		
+            		|| uri.equals(Settings.System.getUriFor(
+            		Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE))){
 	  					updateTempView();
 			} else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_WEATHER_TEMP))) {
@@ -740,6 +746,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_WEATHER_FONT_STYLE, FONT_NORMAL, mCurrentUserId);
         	mWeatherTempColor = Settings.System.getIntForUser(mContext.getContentResolver(),
                     Settings.System.STATUS_BAR_WEATHER_COLOR, 0xFFFFFFFF, mCurrentUserId);
+            mWeatherTempStyle = Settings.System.getIntForUser(mContext.getContentResolver(), 
+                               Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE, 0,
+                    UserHandle.USER_CURRENT);
 			
             if (mShowTaskManager != showTaskManager) {
                 if (!mShowTaskManager) {
@@ -766,11 +775,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 	 
   private void updateWeatherTextState(String temp, int size, int font ,int color) {
         if (mWeatherTempState == 0 || TextUtils.isEmpty(temp)) {
-            mWeatherTempView = (TextView) mStatusBarView.findViewById(R.id.weather_temp);
             mWeatherTempView.setVisibility(View.GONE);
             return;
         }
-        mWeatherTempView = (TextView) mStatusBarView.findViewById(R.id.weather_temp);
         if (temp == null) {
         	mWeatherTempView.setText(null);
         }
@@ -867,7 +874,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void updateTempView() {
         if (mWeatherTempView != null) {
             mWeatherTempView.setVisibility(View.GONE);
+            if (mWeatherTempStyle == 0) {
                 mWeatherTempView = (TextView) mStatusBarView.findViewById(R.id.weather_temp);
+            } else {
+                mWeatherTempView = (TextView) mStatusBarView.findViewById(R.id.left_weather_temp);
+            }
 	    		updateWeatherTextState(mWeatherController.getWeatherInfo().temp,
                     mWeatherTempSize, mWeatherTempFontStyle,mWeatherTempColor);
         }
@@ -1432,6 +1443,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 UserHandle.USER_CURRENT);
         mWeatherTempColor = Settings.System.getIntForUser(mContext.getContentResolver(),
                     Settings.System.STATUS_BAR_WEATHER_COLOR, 0xFFFFFFFF, mCurrentUserId);
+        mWeatherTempStyle = Settings.System.getIntForUser(
+                    mContext.getContentResolver(), Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE, 0,
+                    UserHandle.USER_CURRENT);
+        if (mWeatherTempStyle == 0) {
+            mWeatherTempView = (TextView) mStatusBarView.findViewById(R.id.weather_temp);
+        } else {
+            mWeatherTempView = (TextView) mStatusBarView.findViewById(R.id.left_weather_temp);
+        }
         mWeatherController = new WeatherControllerImpl(mContext);
 
 		updateTempView();
