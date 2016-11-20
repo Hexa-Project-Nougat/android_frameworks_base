@@ -57,6 +57,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.UserInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.content.res.ThemeConfig;
 import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -441,6 +442,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     int[] mAbsPos = new int[2];
     ArrayList<Runnable> mPostCollapseRunnables = new ArrayList<>();
+	
+	ThemeConfig mCurrentTheme;
 
     private boolean mAutomaticBrightness;
     private boolean mBrightnessControl;
@@ -575,6 +578,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
              ContentResolver resolver = mContext.getContentResolver();
              resolver.unregisterContentObserver(this);
          }
+     }
+	 
+     private Resources getNavbarThemedResources() {
+         String pkgName = mCurrentTheme.getOverlayForNavBar();
+         Resources res = null;
+         try {
+             res = mContext.getPackageManager().getThemedResourcesForApplication(
+                     mContext.getPackageName(), pkgName);
+         } catch (PackageManager.NameNotFoundException e) {
+             res = mContext.getResources();
+         }
+         return res;
      }
 
     // ensure quick settings is disabled until the current user makes it through the setup wizard
