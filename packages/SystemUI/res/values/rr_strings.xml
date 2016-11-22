@@ -67,4 +67,6 @@
     <string name="omnijaws_current_text">Now</string>
     <string name="omnijaws_package_not_available">OmniJaws not available</string>
 
+    <string name="recents_custom_android_n">CLEAR ALL</string>
+
 </resources>
