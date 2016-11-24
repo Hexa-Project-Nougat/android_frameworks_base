@@ -23,6 +23,9 @@ import android.content.ContentResolver;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.ContentObserver;
+import android.net.Uri;
+import android.os.Handler;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.Typeface;
@@ -76,6 +79,13 @@ public class KeyguardStatusView extends GridLayout implements
     private int mIconNameValue = 0;
     private int mWIconColor;
 
+    private int mTempColor;
+    private int mConditionColor;
+    private int mCityColor;
+    private int mWindColor;
+    private int mIconColor;
+	
+	private SettingsObserver mSettingsObserver;
 	private WeatherController mWeatherController;
 	
     private KeyguardUpdateMonitorCallback mInfoCallback = new KeyguardUpdateMonitorCallback() {
@@ -167,6 +177,7 @@ public class KeyguardStatusView extends GridLayout implements
         // Disable elegant text height because our fancy colon makes the ymin value huge for no
         // reason.
         mClockView.setElegantTextHeight(false);
+		mSettingsObserver = new SettingsObserver(new Handler());
     }
 
     @Override
@@ -208,7 +219,6 @@ public class KeyguardStatusView extends GridLayout implements
         refreshTime();
 		updateClockSize();
         refreshAlarmStatus(nextAlarm);
-		updateSettings(false);
     }
 	
 	public void updateClockSize() {
@@ -256,15 +266,16 @@ public class KeyguardStatusView extends GridLayout implements
 		updateClockSize();
 		updateLockscreenFonts();
         KeyguardUpdateMonitor.getInstance(mContext).registerCallback(mInfoCallback);
-		updateSettings(false);
-		mWeatherController.addCallback(this);
+        mWeatherController.addCallback(this);
+        mSettingsObserver.observe();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         KeyguardUpdateMonitor.getInstance(mContext).removeCallback(mInfoCallback);
-		mWeatherController.removeCallback(this);
+        mWeatherController.removeCallback(this);
+        mSettingsObserver.unobserve();
     }
 
     private String getOwnerInfo() {
@@ -356,7 +367,7 @@ public class KeyguardStatusView extends GridLayout implements
         }
 	}
 
-    private void  updateSettings(boolean forceHide) {
+    private void  updateSettings(boolean forcehide) {
            final ContentResolver resolver = getContext().getContentResolver();
            final Resources res = getContext().getResources();
            View weatherPanel = findViewById(R.id.weather_panel);
@@ -414,10 +425,9 @@ public class KeyguardStatusView extends GridLayout implements
             mWeatherConditionText.setVisibility(View.VISIBLE);
                mWeatherCity.setVisibility(showLocation ? View.VISIBLE : View.INVISIBLE);
            }
-        noWeatherInfo.setTextColor(primaryTextColor);
-        mWeatherCity.setTextColor(primaryTextColor);
-        mWeatherConditionText.setTextColor(primaryTextColor);
-        mWeatherCurrentTemp.setTextColor(secondaryTextColor);
+	    mWeatherCurrentTemp.setTextColor(mTempColor);
+	    mWeatherConditionText.setTextColor(mConditionColor);
+	    mWeatherCity.setTextColor(mCityColor);
 		
         if (mOwnerInfo != null) {
             mOwnerInfo.setTextColor(ownerInfoColor);
@@ -433,7 +443,12 @@ public class KeyguardStatusView extends GridLayout implements
         }
         mWeatherConditionImage.setImageDrawable(null);
         Drawable weatherIcon = mWeatherConditionDrawable;
-        mWeatherConditionImage.setImageDrawable(weatherIcon);
+         if (mIconColor == -2) {
+            mWeatherConditionImage.setImageDrawable(weatherIcon);
+        } else {
+	        Bitmap coloredWeatherIcon =	ImageHelper.getColoredBitmap(weatherIcon, mIconColor);	
+            mWeatherConditionImage.setImageBitmap(coloredWeatherIcon);
+        }
    	}
 	
     private void updateClockColor() {
@@ -501,4 +516,86 @@ public class KeyguardStatusView extends GridLayout implements
             cacheKey = key;
         }
     }
+
+    class SettingsObserver extends ContentObserver {
+         SettingsObserver(Handler handler) {
+             super(handler);
+         }
+ 
+         void observe() {
+             ContentResolver resolver = mContext.getContentResolver();
+             resolver.registerContentObserver(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_WEATHER_NUMBER_OF_NOTIFICATIONS), false, this, UserHandle.USER_ALL);
+             resolver.registerContentObserver(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_WEATHER_HIDE_PANEL), false, this, UserHandle.USER_ALL);
+             resolver.registerContentObserver(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_WEATHER_CONDITION_ICON), false, this, UserHandle.USER_ALL);
+             resolver.registerContentObserver(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_SHOW_WEATHER), false, this, UserHandle.USER_ALL);
+             resolver.registerContentObserver(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_WEATHER_TEMP_COLOR), false, this, UserHandle.USER_ALL);
+             resolver.registerContentObserver(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_WEATHER_ICON_COLOR), false, this, UserHandle.USER_ALL);
+             resolver.registerContentObserver(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_WEATHER_CITY_COLOR), false, this, UserHandle.USER_ALL);
+             resolver.registerContentObserver(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_WEATHER_ICON_COLOR), false, this, UserHandle.USER_ALL);
+
+             update();
+         }
+ 
+         void unobserve() {
+             ContentResolver resolver = mContext.getContentResolver();
+             resolver.unregisterContentObserver(this);
+         }
+ 
+         @Override
+         public void onChange(boolean selfChange, Uri uri) {
+             if (uri.equals(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_WEATHER_NUMBER_OF_NOTIFICATIONS))) {
+                 updateSettings(false);
+             } else if (uri.equals(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_WEATHER_HIDE_PANEL))) {
+                 updateSettings(false);
+             } else if (uri.equals(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_WEATHER_CONDITION_ICON))) {
+                 updateSettings(false);
+             } else if (uri.equals(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_SHOW_WEATHER))) {
+                 updateSettings(false);
+             } else if (uri.equals(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_WEATHER_TEMP_COLOR))) {
+                 updateSettings(false);
+             } else if (uri.equals(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_WEATHER_ICON_COLOR))) {
+                 updateSettings(false);
+             } else if (uri.equals(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_WEATHER_CITY_COLOR))) {
+                 updateSettings(false);
+             } else if (uri.equals(Settings.System.getUriFor(
+                     Settings.System.LOCK_SCREEN_WEATHER_ICON_COLOR))) {
+                 updateSettings(false);
+             }
+             update();
+         }
+ 
+         public void update() {
+           ContentResolver resolver = mContext.getContentResolver();
+           int currentUserId = ActivityManager.getCurrentUser();
+
+           mShowWeather = Settings.System.getInt(resolver,
+                Settings.System.LOCK_SCREEN_SHOW_WEATHER, 0) == 1;
+
+           mTempColor = Settings.System.getInt(resolver,
+                Settings.System.LOCK_SCREEN_WEATHER_TEMP_COLOR, 0xFFFFFFFF);
+           mConditionColor = Settings.System.getInt(resolver,
+                Settings.System.LOCK_SCREEN_WEATHER_ICON_COLOR, 0xFFFFFFFF);
+           mCityColor = Settings.System.getInt(resolver,
+                Settings.System.LOCK_SCREEN_WEATHER_CITY_COLOR, 0xFFFFFFFF);
+           mIconColor = Settings.System.getInt(resolver,
+                Settings.System.LOCK_SCREEN_WEATHER_ICON_COLOR, -2);
+
+        	 updateSettings(false);
+         }
+     }
 }
