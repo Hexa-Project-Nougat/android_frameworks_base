@@ -5083,6 +5083,12 @@ public final class Settings {
          * @hide
          */
         public static final String POWER_MENU_LOCKSCREEN = "power_menu_lockscreen";
+		
+        /**
+         * Whether to display data activity arrows for wifi/data connections
+         * @hide
+         */
+        public static final String DATA_ACTIVITY_ARROWS = "data_activity_arrows";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
