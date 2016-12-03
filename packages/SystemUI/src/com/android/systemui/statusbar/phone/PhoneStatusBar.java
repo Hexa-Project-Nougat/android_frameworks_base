@@ -601,6 +601,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private int mBlurDarkColorFilter;
     private int mBlurMixedColorFilter;
     private int mBlurLightColorFilter;
+	
+    // data/wifi activity arrows
+    private boolean mDataWifiActivityArrows;
 
     private View.OnTouchListener mUserAutoHideListener = new View.OnTouchListener() {
         @Override
@@ -693,6 +696,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE),
                     false, this, UserHandle.USER_ALL);
+           resolver.registerContentObserver(Settings.System.getUriFor(
+                  Settings.System.DATA_ACTIVITY_ARROWS),
+                  false, this, UserHandle.USER_ALL);
              update();
          }
 		
@@ -725,6 +731,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			} else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_WEATHER_TEMP))) {
 					updateTempView();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.DATA_ACTIVITY_ARROWS))) {
+                    mDataWifiActivityArrows = Settings.System.getIntForUser(
+                            mContext.getContentResolver(),
+                            Settings.System.DATA_ACTIVITY_ARROWS,
+                            0, UserHandle.USER_CURRENT) == 1;
              }
              update();
  		}
@@ -747,6 +759,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mWeatherTempStyle = Settings.System.getIntForUser(mContext.getContentResolver(), 
                                Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE, 0,
                     UserHandle.USER_CURRENT);
+            boolean mDataWifiActivityArrows = Settings.System.getIntForUser(resolver,
+                    Settings.System.DATA_ACTIVITY_ARROWS, 0, UserHandle.USER_CURRENT) == 1;
 			
             if (mShowTaskManager != showTaskManager) {
                 if (!mShowTaskManager) {
