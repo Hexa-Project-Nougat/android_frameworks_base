@@ -88,4 +88,7 @@
 
     <!-- Whether to enable HumanInteractionController by default -->
     <java-symbol type="bool" name="config_HICEnabledDefault" />
+
+    <!-- Doze mode -->
+    <java-symbol type="bool" name="config_doze_enabled_by_default" />
 </resources>
