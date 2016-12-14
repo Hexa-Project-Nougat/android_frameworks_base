@@ -338,6 +338,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             "cmsecure:" + CMSettings.Secure.LOCKSCREEN_MEDIA_METADATA;
     private static final String STATUS_BAR_SHOW_TICKER =
             "system:" + Settings.System.STATUS_BAR_SHOW_TICKER;
+    private static final String NAVBAR_DYNAMIC =
+            "system:" + Settings.System.NAVBAR_DYNAMIC;
 
     static {
         boolean onlyCoreApps;
@@ -879,6 +881,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 SCREEN_BRIGHTNESS_MODE,
                 STATUS_BAR_BRIGHTNESS_CONTROL,
 				STATUS_BAR_SHOW_TICKER,
+				NAVBAR_DYNAMIC,
                 LOCKSCREEN_MEDIA_METADATA);
 
         // Lastly, call to the icon policy to install/update all the icons.
@@ -5765,11 +5768,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             case LOCKSCREEN_MEDIA_METADATA:
                 mShowMediaMetadata = newValue == null || Integer.parseInt(newValue) == 1;
                 break;
-	            case STATUS_BAR_SHOW_TICKER:
-	                mTickerEnabled =
-	                        newValue != null && Integer.parseInt(newValue) == 1;
-	                initTickerView();
-					break;
+            case STATUS_BAR_SHOW_TICKER:
+                mTickerEnabled =
+                        newValue != null && Integer.parseInt(newValue) == 1;
+                initTickerView();
+				break;
+            case NAVBAR_DYNAMIC:
+                if (mNavigationController != null) {
+                    mNavigationController.updateNavbarOverlay(mContext.getResources());
+                }
+                break;
             default:
                 break;
         }

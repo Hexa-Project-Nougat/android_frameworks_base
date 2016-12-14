@@ -1,0 +1,6 @@
+<!-- Colors specific to pixel theme. -->
+<resources>
+
+    <!-- Dynamic Navbar -->
+    <color name="input_method_navigation_guard_dynamic">#00000000</color>
+</resources>
