@@ -37,7 +37,4 @@
   <java-symbol type="string" name="global_action_onthego" />
   <java-symbol type="drawable" name="ic_lock_onthego" />
 
-    <!-- Doze mode -->
-    <java-symbol type="bool" name="config_doze_enabled_by_default" />
-
 </resources>
