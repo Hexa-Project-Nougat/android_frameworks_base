@@ -31,6 +31,7 @@
   <string name="global_action_reboot">Uruchom ponownie</string>
   <!-- label for current user in phone options dialog -->
   <string name="global_action_current_user">Bieżący</string>
+  <!-- status message in phone options dialog for screenshot action -->
   <!-- Restart menu -->
   <!-- Button to restart the phone, within the Restart Options dialog -->
   <string name="reboot_reboot">Uruchom ponownie</string>
@@ -41,6 +42,7 @@
   <!-- Button to restart the phone into download, within the Restart Options dialog -->
   <string name="reboot_download">Uruchom w trybie Download</string>
   <!-- Button to soft restart the device, within the Restart Options dialog -->
+  <string name="reboot_soft">Szybki restart</string>
   <!-- Title of dialog to confirm restarting. -->
   <string name="reboot_title">Uruchom ponownie</string>
   <!-- Restart Confirmation Dialog.  When the user chooses to restart the device, there will
