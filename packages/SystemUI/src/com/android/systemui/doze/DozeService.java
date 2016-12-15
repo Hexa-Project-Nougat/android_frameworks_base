@@ -35,7 +35,6 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.os.Vibrator;
-import android.provider.Settings;
 import android.service.dreams.DreamService;
 import android.util.Log;
 import android.view.Display;
@@ -158,12 +157,7 @@ public class DozeService extends DreamService {
     public void onDreamingStarted() {
         super.onDreamingStarted();
 
-        boolean dozeEnabled = Settings.Secure.getInt(
-                getContentResolver(), Settings.Secure.DOZE_ENABLED,
-                mContext.getResources().getBoolean(
-                com.android.internal.R.bool.config_doze_enabled_by_default) ? 1 : 0) != 0;
-
-        if (mHost == null || !dozeEnabled) {
+        if (mHost == null) {
             finish();
             return;
         }
