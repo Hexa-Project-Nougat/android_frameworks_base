@@ -2217,8 +2217,8 @@ message MetricsEvent {
     // END OF AOSP CONSTANTS
 
     // HexaProject
-    KANGDROID = 496;
+    KANGDROID = 497;
 	
-	QUICK_SETTINGS = 497;
+	QUICK_SETTINGS = 498;
   }
 }
