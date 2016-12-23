@@ -4602,6 +4602,12 @@ public final class Settings {
          * @hide
          */
         public static final String QS_FANCY_ANIMATION = "qs_fancy_animation";
+			
+       /**
+         * Enable single click to turn Battery Saver on or off.
+         * @hide
+         */
+        public static final String QS_BATTERY_EASY_TOGGLE = "qs_battery_easy_toggle";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
