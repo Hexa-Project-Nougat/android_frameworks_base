@@ -87,4 +87,5 @@
 	<!-- Hexa Configuration Tile -->
 	<string name="kdp_qs_title">Hexa Configurations</string>
 
+    <string name="recents_free_ram">Free RAM: %1$d MB</string>
 </resources>
