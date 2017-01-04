@@ -4253,7 +4253,17 @@ public final class Settings {
         public static final String PA_PIE_GAP = "pa_pie_gap";
 
         /**
+<<<<<<< HEAD
          * Pie empty angle, should default to 12
+=======
+         * Whether to enable the pixel navbar animation
+         * @hide
+         */
+        public static final String PIXEL_NAV_ANIMATION = "pixel_nav_animation";
+
+        /**
+         * Whether the proximity sensor will adjust call to speaker
+>>>>>>> a99cbe9... Pixel Navbar animation toggle [1/2]
          * @hide
          */
         public static final String PA_PIE_ANGLE = "pa_pie_angle";
@@ -4789,6 +4799,12 @@ public final class Settings {
          * @hide
          */
         public static final String DOZE_SCREEN_BRIGHTNESS = "doze_screen_brightness";
+		
+        /**
+         * Whether to enable the pixel navbar animation
+         * @hide
+         */
+        public static final String PIXEL_NAV_ANIMATION = "pixel_nav_animation";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
