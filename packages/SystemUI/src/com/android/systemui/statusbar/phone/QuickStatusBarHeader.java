@@ -42,6 +42,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -120,6 +121,7 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
     private float mDateTimeTranslation;
     private SparseBooleanArray mRoamingsBySubId = new SparseBooleanArray();
     private boolean mIsRoaming;
+    private HorizontalScrollView mQuickQsPanelScroller;
 
     private boolean isSettingsIcon;
     private boolean isSettingsExpanded;
@@ -172,6 +174,8 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
         mExpandIndicator = (ExpandableIndicator) findViewById(R.id.expand_indicator);
 
         mHeaderQsPanel = (QuickQSPanel) findViewById(R.id.quick_qs_panel);
+        mQuickQsPanelScroller = (HorizontalScrollView) findViewById(R.id.quick_qs_panel_scroll);
+        mQuickQsPanelScroller.setHorizontalScrollBarEnabled(false);
 
         mSettingsButton = (SettingsButton) findViewById(R.id.settings_button);
         mSettingsContainer = findViewById(R.id.settings_button_container);
@@ -662,6 +666,11 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
             Settings.System.QS_SETTINGS_EXPANDED_TOGGLE, 0) == 1;
     }
 
+    @Override
+    public void onClosingFinished() {
+        mQuickQsPanelScroller.scrollTo(0, 0);
+    }
+	
     public boolean isEditEnabled() {
         return Settings.System.getInt(mContext.getContentResolver(),
             Settings.System.QS_EDIT_TOGGLE, 1) == 1;
