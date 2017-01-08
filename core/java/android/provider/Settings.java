@@ -4735,6 +4735,12 @@ public final class Settings {
          * @hide
          */
         public static final String ENABLE_TASK_MANAGER = "enable_task_manager";
+		
+        /**
+         * Manual override picture to use
+         * @hide
+         */
+        public static final String STATUS_BAR_CUSTOM_HEADER_IMAGE = "status_bar_custom_header_image";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
