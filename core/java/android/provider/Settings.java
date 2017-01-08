@@ -4617,12 +4617,6 @@ public final class Settings {
          * @hide
          */
         public static final String QS_FANCY_ANIMATION = "qs_fancy_animation";
-			
-       /**
-         * Enable single click to turn Battery Saver on or off.
-         * @hide
-         */
-        public static final String QS_BATTERY_EASY_TOGGLE = "qs_battery_easy_toggle";
 
         /**
          * XOSP Blur personalization settings
