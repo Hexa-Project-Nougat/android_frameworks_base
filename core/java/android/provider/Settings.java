@@ -4741,6 +4741,24 @@ public final class Settings {
          * @hide
          */
         public static final String STATUS_BAR_CUSTOM_HEADER_IMAGE = "status_bar_custom_header_image";
+		
+        /**
+         * Select style of kill button for tasks
+         * @hide
+         */
+        public static final String TASK_MANAGER_KILL_BUTTON = "task_manager_kill_button";
+
+        /**
+         * Enable built left services button in task manager
+         * @hide
+         */
+        public static final String TASK_MANAGER_LEFT_BUTTON = "task_manager_left_button";
+
+        /**
+         * Enable built right clear notifications button in task manager
+         * @hide
+         */
+        public static final String TASK_MANAGER_RIGHT_BUTTON = "task_manager_right_button";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
