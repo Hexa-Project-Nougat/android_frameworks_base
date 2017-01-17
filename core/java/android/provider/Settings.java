@@ -4673,8 +4673,13 @@ public final class Settings {
          * 6 notification icons
          * @hide
          */
-        public static final String HIDE_CARRIER_MAX_NOTIFICATION = "hide_carrier_max_notification";
-
+        public static final String HIDE_CARRIER_MAX_NOTIFICATION = "hide_carrier_max_notification";		
+		
+        /**
+         * One Handed mode toggle
+         * @hide
+         */
+        public static final String ONE_HANDED_MODE_UI = "one_handed_mode_ui";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
