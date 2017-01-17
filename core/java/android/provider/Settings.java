@@ -5947,6 +5947,13 @@ public final class Settings {
         public static final String INSTALL_NON_MARKET_APPS = "install_non_market_apps";
 
         /**
+         * One Handed mode toggle
+         * @hide
+         */
+        public static final String ONE_HANDED_MODE_UI = "one_handed_mode_ui";
+
+
+        /**
          * Whether applications can fake a signature.
          *
          * <p>1 = permit apps to fake signature
