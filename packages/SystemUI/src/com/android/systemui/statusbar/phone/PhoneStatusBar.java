@@ -340,6 +340,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             "cmsystem:" + CMSettings.System.STATUS_BAR_BRIGHTNESS_CONTROL;
     private static final String LOCKSCREEN_MEDIA_METADATA =
             "cmsecure:" + CMSettings.Secure.LOCKSCREEN_MEDIA_METADATA;
+    private static final String NAVBAR_LEFT_IN_LANDSCAPE =
+            "cmsystem:" + CMSettings.System.NAVBAR_LEFT_IN_LANDSCAPE;
     private static final String STATUS_BAR_SHOW_TICKER =
             "system:" + Settings.System.STATUS_BAR_SHOW_TICKER;
     private static final String NAVBAR_DYNAMIC =
@@ -940,7 +942,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 RECENT_APPS_RADIUS_PREFERENCE_KEY,
                 BLUR_DARK_COLOR_PREFERENCE_KEY,
                 BLUR_LIGHT_COLOR_PREFERENCE_KEY,
-                BLUR_MIXED_COLOR_PREFERENCE_KEY);
+                BLUR_MIXED_COLOR_PREFERENCE_KEY,
+				NAVBAR_LEFT_IN_LANDSCAPE);
 		
         // Lastly, call to the icon policy to install/update all the icons.
         mIconPolicy = new PhoneStatusBarPolicy(mContext, mIconController, mCastController,
@@ -5865,6 +5868,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             case STATUS_BAR_BRIGHTNESS_CONTROL:
                 mBrightnessControl = newValue != null && Integer.parseInt(newValue) == 1;
                 break;
+            case NAVBAR_LEFT_IN_LANDSCAPE:
+				if (mNavigationController.getBar() != null) {
+	                    final boolean navLeftInLandscape = newValue != null &&
+	                            Integer.parseInt(newValue) == 1;
+	                    mNavigationController.getBar().setLeftInLandscape(navLeftInLandscape);
+				}
+				break;
             case LOCKSCREEN_MEDIA_METADATA:
                 mShowMediaMetadata = newValue == null || Integer.parseInt(newValue) == 1;
                 break;
