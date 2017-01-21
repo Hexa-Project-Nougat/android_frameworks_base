@@ -17,8 +17,13 @@
 package com.android.systemui.statusbar.phone;
 
 import android.content.Context;
+import android.database.ContentObserver;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.Uri;
+import android.os.Handler;
+import android.provider.Settings;
+import android.os.UserHandle;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
