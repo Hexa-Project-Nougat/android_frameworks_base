@@ -163,8 +163,14 @@ public class KeyguardStatusView extends GridLayout {
 		
 		updateLockscreenFonts();
         refreshTime();
+		updateClockSize();
         refreshAlarmStatus(nextAlarm);
     }
+	
+	public void updateClockSize() {
+        mClockView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimensionPixelSize(R.dimen.widget_big_font_size));
+	}
 
     void refreshAlarmStatus(AlarmManager.AlarmClockInfo nextAlarm) {
         if (nextAlarm != null) {
@@ -203,6 +209,7 @@ public class KeyguardStatusView extends GridLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+		updateClockSize();
 		updateLockscreenFonts();
         KeyguardUpdateMonitor.getInstance(mContext).registerCallback(mInfoCallback);
     }
