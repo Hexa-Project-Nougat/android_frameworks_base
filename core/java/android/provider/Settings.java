@@ -4813,6 +4813,12 @@ public final class Settings {
          * @hide
          */
         public static final String DISABLE_DASHBOARD_CONDITIONS = "disable_dashboard_conditions";
+		
+        /**
+         * Dashboard columns in settings
+         * @hide
+         */
+        public static final String DASHBOARD_COLUMNS = "dashboard_columns";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
