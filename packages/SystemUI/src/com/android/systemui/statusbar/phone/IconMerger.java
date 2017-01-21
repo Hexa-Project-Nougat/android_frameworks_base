@@ -21,6 +21,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.android.systemui.R;
@@ -94,8 +95,11 @@ public class IconMerger extends LinearLayout {
         // let's assume we have one more slot if the more icon is already showing
         if (overflowShown) {
             int totalWidth = getResources().getDisplayMetrics().widthPixels;
+        final ViewGroup parent = (ViewGroup)getParent();
+        View label = parent.findViewById(R.id.statusbar_carrier_text);
             if ((mClockLocation != ClockController.CLOCK_POSITION_CENTER &&
-                    mClockLocation != ClockController.CLOCK_POSITION_LEFT) ||
+                    mClockLocation != ClockController.CLOCK_POSITION_LEFT &&
+						label.getVisibility() != View.VISIBLE) ||
                     (visibleChildren > (totalWidth / getFullIconWidth() / 2 + 1))) {
                 visibleChildren--;
             }
