@@ -246,7 +246,7 @@ public class KeyguardStatusBarView extends RelativeLayout
             if (mShowCarrierLabel == 1) {
                 mCarrierLabel.setVisibility(View.VISIBLE);
             } else if (mShowCarrierLabel == 3) {
-                mCarrierLabel.setVisibility(View.VISIBLE);
+                mCarrierLabel.setVisibility(View.GONE);
             } else {
                 mCarrierLabel.setVisibility(View.GONE);
             }
@@ -440,6 +440,11 @@ public class KeyguardStatusBarView extends RelativeLayout
                 "status_bar_show_carrier"), false, mObserver);
         getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
                 "status_bar_carrier_font_style"), false, mObserver);
+    }
+	
+    @Override
+    public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
     }
 
     public void getFontStyle(int font) {
