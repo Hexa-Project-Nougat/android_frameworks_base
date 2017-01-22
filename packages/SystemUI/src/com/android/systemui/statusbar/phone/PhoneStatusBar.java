@@ -98,6 +98,11 @@ import android.os.UserHandle;
 import android.os.UserManager;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.renderscript.Allocation;
+import android.renderscript.Allocation.MipmapControl;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.NotificationListenerService.RankingMap;
 import android.service.notification.StatusBarNotification;
@@ -543,6 +548,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private int mBlurMixedColorFilter;
     private int mBlurLightColorFilter;
 
+    private int mBlurRadius;
+    private Bitmap mBlurredImage = null;
+
     private View.OnTouchListener mUserAutoHideListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -607,6 +615,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.NAVBAR_BUTTON_COLOR),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCKSCREEN_BLUR_RADIUS),
+                    false, this, UserHandle.USER_ALL);
              update();
          }
 		
@@ -635,6 +646,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
              ContentResolver resolver = mContext.getContentResolver();
             mMaxKeyguardNotifConfig = Settings.System.getIntForUser(resolver,
                     Settings.System.LOCKSCREEN_MAX_NOTIF_CONFIG, 5, mCurrentUserId);
+            mBlurRadius = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.LOCKSCREEN_BLUR_RADIUS, 14); 
          }
 
          protected void unobserve() {
@@ -2566,6 +2579,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         boolean hideBecauseOccluded = mStatusBarKeyguardViewManager != null
                 && mStatusBarKeyguardViewManager.isOccluded();
+
+        // apply blurred image
+        if (backdropBitmap == null) {
+            backdropBitmap = mBlurredImage;
+            // might still be null
+        }
+
+		// apply user lockscreen image
+        if (mMediaMetadata == null && backdropBitmap == null) {
+            WallpaperManager wm = (WallpaperManager)
+                    mContext.getSystemService(Context.WALLPAPER_SERVICE);
+            if (wm != null) {
+                backdropBitmap = wm.getKeyguardBitmap();
+            }
+        }
 
         final boolean keyguardVisible = (mState != StatusBarState.SHADE);
         final boolean hasArtwork = artworkDrawable != null;
@@ -5603,6 +5631,44 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     public VisualizerView getVisualizer() {
         return mVisualizerView;
+    }
+	
+    public void setBackgroundBitmap(Bitmap bmp) {
+        if (bmp != null) {
+            if (mBlurRadius != 0) {
+                mBlurredImage = blurBitmap(bmp, mBlurRadius);
+            } else {
+                mBlurredImage = bmp;
+            }
+        } else {
+            mBlurredImage = null;
+        }
+
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                updateMediaMetaData(true);
+            }
+        });
+    }
+
+    private Bitmap blurBitmap(Bitmap bmp, int radius) {
+        Bitmap out = Bitmap.createBitmap(bmp);
+        RenderScript rs = RenderScript.create(mContext);
+
+        Allocation input = Allocation.createFromBitmap(
+                rs, bmp, MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+        Allocation output = Allocation.createTyped(rs, input.getType());
+
+        ScriptIntrinsicBlur script = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+        script.setInput(input);
+        script.setRadius(radius);
+        script.forEach(output);
+
+        output.copyTo(out);
+
+        rs.destroy();
+        return out;
     }
 
     private final class ShadeUpdates {
