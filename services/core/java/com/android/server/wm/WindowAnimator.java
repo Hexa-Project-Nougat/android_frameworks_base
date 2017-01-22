@@ -59,6 +59,7 @@ import android.view.WindowManager;
 import android.view.WindowManagerPolicy;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.provider.Settings;
 
 import cyanogenmod.providers.CMSettings;
 
@@ -316,6 +317,9 @@ public class WindowAnimator {
                 (mKeyguardGoingAwayFlags & KEYGUARD_GOING_AWAY_FLAG_NO_WINDOW_ANIMATIONS) != 0;
         final boolean keyguardGoingAwayWithWallpaper =
                 (mKeyguardGoingAwayFlags & KEYGUARD_GOING_AWAY_FLAG_WITH_WALLPAPER) != 0;
+		
+        final boolean seeThrough = Settings.System.getBoolean(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_SEE_THROUGH, false);
 
         if (mKeyguardGoingAway && !mKeyguardBlurEnabled) {
             for (int i = windows.size() - 1; i >= 0; i--) {
@@ -331,7 +335,7 @@ public class WindowAnimator {
 
                         // Create a new animation to delay until keyguard is gone on its own.
                         winAnimator.mAnimation = new AlphaAnimation(1.0f, 1.0f);
-                        winAnimator.mAnimation.setDuration(mKeyguardBlurEnabled
+                        winAnimator.mAnimation.setDuration(seeThrough
                                 ? 0 : KEYGUARD_ANIM_TIMEOUT_MS);
                         winAnimator.mAnimationIsEntrance = false;
                         winAnimator.mAnimationStartTime = -1;
