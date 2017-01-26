@@ -237,6 +237,8 @@ import com.android.systemui.statusbar.stack.NotificationStackScrollLayout
         .OnChildLocationsChangedListener;
 import com.android.systemui.statusbar.stack.StackStateAnimator;
 import com.android.systemui.statusbar.stack.StackViewState;
+import com.android.systemui.slimrecent.RecentController;
+import com.android.systemui.slimrecent.SlimScreenPinningRequest;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.volume.VolumeComponent;
 
@@ -604,6 +606,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 	
     // data/wifi activity arrows
     private boolean mDataWifiActivityArrows;
+	
+    private RecentController mSlimRecents;
+
+    private SlimScreenPinningRequest mSlimScreenPinningRequest;
 
     private View.OnTouchListener mUserAutoHideListener = new View.OnTouchListener() {
         @Override
@@ -699,6 +705,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
            resolver.registerContentObserver(Settings.System.getUriFor(
                   Settings.System.DATA_ACTIVITY_ARROWS),
                   false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.USE_SLIM_RECENTS), false, this,
+                    UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.RECENT_CARD_BG_COLOR), false, this,
+                    UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.RECENT_CARD_TEXT_COLOR), false, this,
+                    UserHandle.USER_ALL);
              update();
          }
 		
@@ -737,6 +752,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                             mContext.getContentResolver(),
                             Settings.System.DATA_ACTIVITY_ARROWS,
                             0, UserHandle.USER_CURRENT) == 1;
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.USE_SLIM_RECENTS))) {
+                updateRecents();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.RECENT_CARD_BG_COLOR))
+                    || uri.equals(Settings.System.getUriFor(
+                    Settings.System.RECENT_CARD_TEXT_COLOR))) {
+                rebuildRecentsScreen();
              }
              update();
  		}
@@ -779,6 +802,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			updateTempView();
 			// Update StatusBar Header Machine when Custom Header Shadow changed
 			mStatusBarHeaderMachine.updateEnablement();
+			
+            // update recents
+            updateRecents();
+            rebuildRecentsScreen();
          }
 
          protected void unobserve() {
@@ -1185,7 +1212,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 		
 		SettingsObserver observer = new SettingsObserver(mHandler);
         observer.observe();
-
+		
+		updateRecents();
         addNavigationBar();
 
         TunerService.get(mContext).addTunable(this,
@@ -1386,6 +1414,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mTickerEnabled = Settings.System.getIntForUser(mContext.getContentResolver(),
                     Settings.System.STATUS_BAR_SHOW_TICKER, 0, UserHandle.USER_CURRENT) == 1;
         initTickerView();
+		
+		mSlimScreenPinningRequest = new SlimScreenPinningRequest(mContext);
 
         // set the inital view visibility
         setAreThereNotifications();
@@ -5827,6 +5857,8 @@ mWeatherTempSize, mWeatherTempFontStyle, mWeatherTempColor);
     }
 
     public void showScreenPinningRequest(int taskId, boolean allowCancel) {
+        hideRecents(false, false);
+        //mSlimScreenPinningRequest.showPrompt(taskId, allowCancel);
         mScreenPinningRequest.showPrompt(taskId, allowCancel);
     }
 
@@ -6212,5 +6244,70 @@ mWeatherTempSize, mWeatherTempFontStyle, mWeatherTempColor);
     private void setBlurSettings() {
         RecentsActivity.updateBlurColors(mBlurDarkColorFilter,mBlurMixedColorFilter,mBlurLightColorFilter);
         RecentsActivity.updateRadiusScale(mScaleRecents, mRadiusRecents);
+    }
+	
+    @Override
+    protected void hideRecents(boolean triggeredFromAltTab, boolean triggeredFromHomeKey) {
+        if (mSlimRecents != null) {
+            mSlimRecents.hideRecents(triggeredFromHomeKey);
+        } else {
+            super.hideRecents(triggeredFromAltTab, triggeredFromHomeKey);
+        }
+    }
+
+    @Override
+    protected void toggleRecents() {
+        if (mSlimRecents != null) {
+            sendCloseSystemWindows(mContext, SYSTEM_DIALOG_REASON_RECENT_APPS);
+            mSlimRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView());
+        } else {
+            super.toggleRecents();
+        }
+    }
+
+    @Override
+    protected void preloadRecents() {
+        if (mSlimRecents != null) {
+            mSlimRecents.preloadRecentTasksList();
+        } else {
+            super.preloadRecents();
+        }
+    }
+
+    @Override
+    protected void cancelPreloadingRecents() {
+        if (mSlimRecents != null) {
+            mSlimRecents.cancelPreloadingRecentTasksList();
+        } else {
+            super.cancelPreloadingRecents();
+        }
+    }
+
+    protected void rebuildRecentsScreen() {
+        if (mSlimRecents != null) {
+            mSlimRecents.rebuildRecentsScreen();
+        }
+    }
+
+    protected void updateRecents() {
+        boolean slimRecents = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.USE_SLIM_RECENTS, 0, UserHandle.USER_CURRENT) == 1;
+
+        if (slimRecents) {
+            mSlimRecents = new RecentController(mContext, mLayoutDirection);
+            //mSlimRecents.setCallback(this);
+            rebuildRecentsScreen();
+        } else {
+            mSlimRecents = null;
+        }
+    }
+
+    private static void sendCloseSystemWindows(Context context, String reason) {
+        if (ActivityManagerNative.isSystemReady()) {
+            try {
+                ActivityManagerNative.getDefault().closeSystemDialogs(reason);
+            } catch (RemoteException e) {
+            }
+        }
     }
 }
