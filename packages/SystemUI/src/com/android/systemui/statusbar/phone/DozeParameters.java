@@ -128,10 +128,20 @@ public class DozeParameters {
     }
 
     public boolean getVibrateOnPickup() {
+        if (getOverwriteValue()) {
+            return Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.DOZE_VIBRATE_ON_PICKUP, 0,
+                    UserHandle.USER_CURRENT) == 1;
+        }
         return SystemProperties.getBoolean("doze.vibrate.pickup", false);
     }
 
     public boolean getProxCheckBeforePulse() {
+        if (getOverwriteValue()) {
+            return Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.DOZE_PROXIMITY_CHECK_BEFORE_PULSE, 0,
+                    UserHandle.USER_CURRENT) == 1;
+        }
         return getBoolean("doze.pulse.proxcheck", R.bool.doze_proximity_check_before_pulse);
     }
 
