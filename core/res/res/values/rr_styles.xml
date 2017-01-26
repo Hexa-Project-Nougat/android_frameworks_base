@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-/*
-** Copyright 2009, The Android Open Source Project
+/* Copyright 2016 Resurrection Remix
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -16,16 +15,16 @@
 ** limitations under the License.
 */
 -->
+<resources>
 
-<!-- These resources are around just to allow their values to be customized
-     for different hardware and product builds.  Do not translate. -->
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"> 
+    <!-- Slim recent app screen animation -->
+    <style name="Animation.RecentScreen">
+        <item name="android:windowEnterAnimation">@anim/recent_screen_enter</item>
+        <item name="android:windowExitAnimation">@anim/recent_screen_exit</item>
+    </style>
 
-    <bool name="single_hand_mode">true</bool>
-    <!-- The duration (in milliseconds) of recent app screen animation. -->
-    <integer name="config_recentDefaultDur">300</integer>
-
-    <!-- The duration (in milliseconds) of recent app screen exit animation. -->
-    <integer name="config_recentExitDur">450</integer>
-
+    <style name="Animation.RecentScreen.Left">
+        <item name="android:windowEnterAnimation">@anim/recent_screen_enter_left</item>
+        <item name="android:windowExitAnimation">@anim/recent_screen_exit_left</item>
+    </style>
 </resources>
