@@ -4253,17 +4253,7 @@ public final class Settings {
         public static final String PA_PIE_GAP = "pa_pie_gap";
 
         /**
-<<<<<<< HEAD
          * Pie empty angle, should default to 12
-=======
-         * Whether to enable the pixel navbar animation
-         * @hide
-         */
-        public static final String PIXEL_NAV_ANIMATION = "pixel_nav_animation";
-
-        /**
-         * Whether the proximity sensor will adjust call to speaker
->>>>>>> a99cbe9... Pixel Navbar animation toggle [1/2]
          * @hide
          */
         public static final String PA_PIE_ANGLE = "pa_pie_angle";
