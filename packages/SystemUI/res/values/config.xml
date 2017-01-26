@@ -209,7 +209,7 @@
     <bool name="doze_pulse_on_significant_motion">false</bool>
 
     <!-- Doze: check proximity sensor before pulsing? -->
-    <bool name="doze_proximity_check_before_pulse">true</bool>
+    <bool name="doze_proximity_check_before_pulse">false</bool>
 
     <!-- Doze: should notifications be used as a pulse signal? -->
     <bool name="doze_pulse_on_notifications">true</bool>
