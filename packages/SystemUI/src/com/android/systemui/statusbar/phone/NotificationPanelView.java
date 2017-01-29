@@ -89,14 +89,11 @@ import com.android.systemui.statusbar.notification.NotificationUtils;
 import com.android.systemui.statusbar.policy.HeadsUpManager;
 import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
 import com.android.systemui.statusbar.policy.OnHeadsUpChangedListener;
-import com.android.systemui.statusbar.policy.WeatherController;
-import com.android.systemui.statusbar.policy.WeatherControllerImpl;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 import com.android.systemui.statusbar.stack.StackStateAnimator;
 import com.android.systemui.tuner.TunerService;
 
 import cyanogenmod.providers.CMSettings;
-import cyanogenmod.weather.util.WeatherUtils;
 import com.android.internal.statusbar.IStatusBarService;
 
 import java.util.List;
@@ -105,7 +102,7 @@ public class NotificationPanelView extends PanelView implements
         ExpandableView.OnHeightChangedListener,
         View.OnClickListener, NotificationStackScrollLayout.OnOverscrollTopChangedListener,
         KeyguardAffordanceHelper.Callback, NotificationStackScrollLayout.OnEmptySpaceClickListener,
-        OnHeadsUpChangedListener, WeatherController.Callback, TunerService.Tunable {
+        OnHeadsUpChangedListener, TunerService.Tunable {
 
     private static final boolean DEBUG = false;
 
@@ -124,8 +121,6 @@ public class NotificationPanelView extends PanelView implements
             "cmsystem:" + CMSettings.System.STATUS_BAR_QUICK_QS_PULLDOWN;
     private static final String DOUBLE_TAP_SLEEP_GESTURE =
             "cmsystem:" + CMSettings.System.DOUBLE_TAP_SLEEP_GESTURE;
-    private static final String LOCK_SCREEN_WEATHER_ENABLED =
-            "cmsecure:" + CMSettings.Secure.LOCK_SCREEN_WEATHER_ENABLED;
     private static final String DOUBLE_TAP_SLEEP_ANYWHERE =
             "cmsecure:" + CMSettings.Secure.DOUBLE_TAP_SLEEP_ANYWHERE;
     private static final String QS_TRANSPARENT_SHADE =
@@ -302,10 +297,6 @@ public class NotificationPanelView extends PanelView implements
     private int mCustomDashWidth;
     private int mCustomDashGap;
 
-    private boolean mKeyguardWeatherEnabled;
-    private TextView mKeyguardWeatherInfo;
-    private WeatherControllerImpl mWeatherController;
-
     public static boolean mBlurredStatusBarExpandedEnabled;
     public static NotificationPanelView mNotificationPanelView;
 
@@ -373,11 +364,6 @@ public class NotificationPanelView extends PanelView implements
         mStatusBar = bar;
     }
 
-    public void setWeatherController(WeatherControllerImpl weatherController) {
-        mWeatherController = weatherController;
-        mWeatherController.addCallback(this);
-    }
-
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -429,7 +415,6 @@ public class NotificationPanelView extends PanelView implements
         });
 		mSettingsObserver = new SettingsObserver(mHandler);
 
-        mKeyguardWeatherInfo = (TextView) mKeyguardStatusView.findViewById(R.id.weather_info);
         setQSStroke();
         setQSBackgroundAlpha();
 
@@ -636,7 +621,6 @@ public class NotificationPanelView extends PanelView implements
         TunerService.get(mContext).addTunable(this,
                 STATUS_BAR_QUICK_QS_PULLDOWN,
                 DOUBLE_TAP_SLEEP_GESTURE,
-                LOCK_SCREEN_WEATHER_ENABLED,
                 DOUBLE_TAP_SLEEP_ANYWHERE,
                 QS_TRANSPARENT_SHADE,
                 QS_STROKE,
@@ -661,7 +645,6 @@ public class NotificationPanelView extends PanelView implements
         super.onDetachedFromWindow();
         TunerService.get(mContext).removeTunable(this);
 		mSettingsObserver.unobserve();
-        mWeatherController.removeCallback(this);
     }
 
     public static void recycle() {
@@ -2909,19 +2892,6 @@ public class NotificationPanelView extends PanelView implements
     }
 
     @Override
-    public void onWeatherChanged(WeatherController.WeatherInfo info) {
-        if (!mKeyguardWeatherEnabled || Double.isNaN(info.temp) || info.condition == null) {
-            mKeyguardWeatherInfo.setVisibility(GONE);
-        } else {
-            mKeyguardWeatherInfo.setText(mContext.getString(
-                    R.string.keyguard_status_view_weather_format,
-                    WeatherUtils.formatTemperature(info.temp, info.tempUnit),
-                    info.condition));
-            mKeyguardWeatherInfo.setVisibility(VISIBLE);
-        }
-    }
-
-    @Override
     public void onTuningChanged(String key, String newValue) {
         switch (key) {
             case DOUBLE_TAP_SLEEP_GESTURE:
@@ -2930,14 +2900,6 @@ public class NotificationPanelView extends PanelView implements
             case STATUS_BAR_QUICK_QS_PULLDOWN:
                 mOneFingerQuickSettingsIntercept =
                         newValue == null ? 0 : Integer.parseInt(newValue);
-                break;
-            case LOCK_SCREEN_WEATHER_ENABLED:
-                final boolean wasKeyguardWeatherEnabled = mKeyguardWeatherEnabled;
-                mKeyguardWeatherEnabled = newValue != null && Integer.parseInt(newValue) == 1;
-                if (mWeatherController != null
-                        && wasKeyguardWeatherEnabled != mKeyguardWeatherEnabled) {
-                    onWeatherChanged(mWeatherController.getWeatherInfo());
-                }
                 break;
             case DOUBLE_TAP_SLEEP_ANYWHERE:
                 mDoubleTapToSleepAnywhere = newValue == null || Integer.parseInt(newValue) == 1;
