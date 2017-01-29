@@ -150,8 +150,6 @@ import com.android.internal.util.rr.WeatherController.WeatherInfo;
 import com.android.internal.utils.du.ActionHandler;
 import com.android.internal.utils.du.DUPackageMonitor;
 import com.android.internal.utils.du.DUSystemReceiver;
-import com.android.systemui.statusbar.policy.WeatherController;
-import com.android.systemui.statusbar.policy.WeatherController.WeatherInfo;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
