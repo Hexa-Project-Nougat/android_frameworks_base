@@ -1515,8 +1515,6 @@ mWeatherTempSize, mWeatherTempFontStyle, mWeatherTempColor);
                 .setBatteryController(mBatteryController);
         mKeyguardStatusBar.setBatteryController(mBatteryController);
 
-        mNotificationPanel.setWeatherController(mWeatherController);
-
         mReportRejectedTouch = mStatusBarWindow.findViewById(R.id.report_rejected_touch);
         if (mReportRejectedTouch != null) {
             updateReportRejectedTouchVisibility();
@@ -1545,7 +1543,6 @@ mWeatherTempSize, mWeatherTempFontStyle, mWeatherTempColor);
                         true /* onlyProvisioned */, true /* dismissShade */);
             });
         }
-
 
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         mBroadcastReceiver.onReceive(mContext,
