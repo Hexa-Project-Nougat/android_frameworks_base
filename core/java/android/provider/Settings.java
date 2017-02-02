@@ -4406,6 +4406,12 @@ public final class Settings {
         public static final String TRANSPARENT_VOLUME_DIALOG = "transparent_volume_dialog";
 
         /**
+         * Whether to display qs tile titles in the qs panel
+         * @hide
+         */
+        public static final String QS_TILE_TITLE_VISIBILITY = "qs_tile_title_visibility";
+
+        /**
          * Volume dialog stroke
          * 0 = disabled
          * 1 = use accent color (default)
@@ -4998,6 +5004,18 @@ public final class Settings {
          */
         public static final String LOCK_SCREEN_WEATHER_ICON_COLOR = "lock_screen_weather_icon_color";
 
+	/**
+         * Define if screenshot crop & share is active
+         * @hide
+         */
+        public static final String SCREENSHOT_CROP_AND_SHARE = "screenshot_crop_and_share";
+
+        /**
+         * Define the crop behavior of screenshot crop & share
+         * @hide
+         */
+        public static final String SCREENSHOT_CROP_BEHAVIOR = "screenshot_crop_behavior";
+
         /**
          * Color of the weather condition icons on the lock screen
          * @hide
@@ -5041,6 +5059,11 @@ public final class Settings {
         public static final String LS_SHORTCUT_ICON_COLOR =
                 "ls_shortcut_icon_color";
 
+        /**
+         * Whether to center or left justify date time group
+         * @hide
+         */
+        public static final String QS_DATE_TIME_CENTER = "qs_date_time_center";
 
         /**
          * Vibrate on pulsing while pickup

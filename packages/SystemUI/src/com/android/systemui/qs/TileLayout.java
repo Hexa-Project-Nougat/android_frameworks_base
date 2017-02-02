@@ -82,6 +82,13 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
         final int columnsConfig = Settings.Secure.getInt(resolver,
                 Settings.Secure.QS_COLUMNS, 3);
         final int columns = Math.max(1, columnsConfig);
+		
+        if (Settings.System.getInt(mContext.getContentResolver(),
+             Settings.System.QS_TILE_TITLE_VISIBILITY, 1) == 1) {
+            mCellHeight = mContext.getResources().getDimensionPixelSize(R.dimen.qs_tile_height);
+        } else {
+            mCellHeight = mContext.getResources().getDimensionPixelSize(R.dimen.qs_tile_height_wo_label);
+        }
 
         mCellHeight = mContext.getResources().getDimensionPixelSize(R.dimen.qs_tile_height);
         mCellMargin = res.getDimensionPixelSize(R.dimen.qs_tile_margin);
