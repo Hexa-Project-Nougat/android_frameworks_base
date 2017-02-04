@@ -886,6 +886,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private boolean mTopWindowIsKeyguard;
 
     private boolean mVolumeAnswerCall;
+	
+	int mDesiredRotation = -1;
 
     private CameraManager mCameraManager;
     private String mRearFlashCameraId;
