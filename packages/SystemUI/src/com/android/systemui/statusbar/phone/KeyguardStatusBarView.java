@@ -137,7 +137,7 @@ public class KeyguardStatusBarView extends RelativeLayout
 	
     private void showKeyguardClock() {
         int mShowKeyguardClock = Settings.System.getIntForUser(getContext().getContentResolver(),
-                Settings.Secure.KEYGUARD_SHOW_CLOCK, 1, UserHandle.USER_CURRENT);
+                Settings.System.KEYGUARD_SHOW_CLOCK, 1, UserHandle.USER_CURRENT);
     }
 
     @Override
@@ -256,7 +256,7 @@ public class KeyguardStatusBarView extends RelativeLayout
         }
 		
             if (Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.Secure.KEYGUARD_SHOW_CLOCK, 0) == 1) {
+                    Settings.System.KEYGUARD_SHOW_CLOCK, 0) == 1) {
                 mKeyguardClock.setVisibility(View.VISIBLE);
             } else {
                 mKeyguardClock.setVisibility(View.GONE);
@@ -465,7 +465,7 @@ public class KeyguardStatusBarView extends RelativeLayout
         getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
                 "status_bar_carrier_font_style"), false, mObserver);
         getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor(
-                Settings.Secure.KEYGUARD_SHOW_CLOCK), false, mObserver);
+                Settings.System.KEYGUARD_SHOW_CLOCK), false, mObserver);
     }
 	
     @Override
