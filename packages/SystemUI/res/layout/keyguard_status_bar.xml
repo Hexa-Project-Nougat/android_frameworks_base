@@ -92,5 +92,7 @@
         android:ellipsize="marquee"
         android:textAppearance="@style/TextAppearance.StatusBar.CarrierLabel"
         android:textColor="#ffffff" />
+		
+		</LinearLayout>
 
 </com.android.systemui.statusbar.phone.KeyguardStatusBarView>
