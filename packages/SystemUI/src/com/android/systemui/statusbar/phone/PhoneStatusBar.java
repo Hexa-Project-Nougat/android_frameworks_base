@@ -777,6 +777,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
             }
 			updateTempView();
+			// Update StatusBar Header Machine when Custom Header Shadow changed
+			mStatusBarHeaderMachine.updateEnablement();
          }
 
          protected void unobserve() {
