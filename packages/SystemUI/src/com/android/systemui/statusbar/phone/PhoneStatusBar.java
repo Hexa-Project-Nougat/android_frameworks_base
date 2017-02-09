@@ -731,12 +731,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			} else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_WEATHER_TEMP))) {
 					updateTempView();
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.DATA_ACTIVITY_ARROWS))) {
-                    mDataWifiActivityArrows = Settings.System.getIntForUser(
-                            mContext.getContentResolver(),
-                            Settings.System.DATA_ACTIVITY_ARROWS,
-                            0, UserHandle.USER_CURRENT) == 1;
              }
              update();
  		}
@@ -777,6 +771,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
             }
 			updateTempView();
+			// Update StatusBar Header Machine when Custom Header Shadow changed
+			mStatusBarHeaderMachine.updateEnablement();
          }
 
          protected void unobserve() {
