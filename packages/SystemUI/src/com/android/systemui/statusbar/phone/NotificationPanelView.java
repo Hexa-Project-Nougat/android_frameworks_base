@@ -2984,12 +2984,12 @@ public class NotificationPanelView extends PanelView implements
     }
 	
     private void setQSSettings() {
-        setQSStroke();
         if (mTranslucentQuickSettings) {
             handleQuickSettingsBackround();
         } else {
             setQSBackgroundAlpha();
         }
+        setQSStroke();
     }
 
     private void setBlurSettings() {
