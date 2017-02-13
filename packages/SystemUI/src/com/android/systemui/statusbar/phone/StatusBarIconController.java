@@ -357,11 +357,18 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
                 UserHandle.USER_CURRENT) == 2) {
         animateHide(mCarrierLabel,animate);
         }
+
+        if (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_SHOW_WEATHER_TEMP, 0,
+                UserHandle.USER_CURRENT) == 0) {
+        return;
+        }
         if (Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE, 0,
                 UserHandle.USER_CURRENT) == 1) {
         animateHide(mWeatherLeft,animate);
-        } 
+        }
+
     }
 
     public void showSystemIconArea(boolean animate) {
@@ -371,6 +378,11 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
                 Settings.System.STATUS_BAR_SHOW_CARRIER,  0,
                 UserHandle.USER_CURRENT) == 2) {
         animateShow(mCarrierLabel,animate);
+        }
+        if (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_SHOW_WEATHER_TEMP, 0,
+                UserHandle.USER_CURRENT) == 0) {
+        return;
         }
         if (Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE, 0,
