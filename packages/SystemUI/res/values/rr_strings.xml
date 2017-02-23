@@ -45,4 +45,8 @@
     <string name="action_save_fault">Saving was unsuccessful</string>
     <string name="action_edit">Edit</string>
 
+    <!-- Slim recents app sidebar queue app toast -->
+    <string name="toast_recents_queue_app">Launch %s after closing recents</string>
+    <string name="toast_recents_cancel_queued_app">Cancelled app launch</string>
+
 </resources>
