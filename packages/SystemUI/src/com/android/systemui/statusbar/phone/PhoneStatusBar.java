@@ -183,6 +183,7 @@ import com.android.systemui.recents.events.activity.UndockingTaskEvent;
 import com.android.systemui.recents.RecentsActivity;
 import com.android.systemui.settings.BrightnessController;
 import com.android.systemui.settings.CurrentUserTracker;
+import com.android.systemui.slimrecent.RecentController;
 import com.android.systemui.stackdivider.Divider;
 import com.android.systemui.stackdivider.WindowManagerProxy;
 import com.android.systemui.statusbar.ActivatableNotificationView;
@@ -608,8 +609,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private boolean mDataWifiActivityArrows;
 	
     private RecentController mSlimRecents;
-
-    private SlimScreenPinningRequest mSlimScreenPinningRequest;
 
     private View.OnTouchListener mUserAutoHideListener = new View.OnTouchListener() {
         @Override
@@ -1428,9 +1427,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_SHOW_TICKER, 0, UserHandle.USER_CURRENT) == 1;
         initTickerView();
 		
-		mSlimScreenPinningRequest = new SlimScreenPinningRequest(mContext);
-
-        // set the inital view visibility
+		// set the inital view visibility
         setAreThereNotifications();
 
         createIconController();
@@ -5871,7 +5868,6 @@ mWeatherTempSize, mWeatherTempFontStyle, mWeatherTempColor);
 
     public void showScreenPinningRequest(int taskId, boolean allowCancel) {
         hideRecents(false, false);
-        //mSlimScreenPinningRequest.showPrompt(taskId, allowCancel);
         mScreenPinningRequest.showPrompt(taskId, allowCancel);
     }
 
