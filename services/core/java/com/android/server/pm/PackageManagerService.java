@@ -4592,7 +4592,8 @@ public class PackageManagerService extends IPackageManager.Stub {
                         || actionName.startsWith("android.net.netmon.launchCaptivePortalApp")
                         || actionName.startsWith("intent_navbar_edit")
 						|| actionName.startsWith("intent_action_action_picker")
-                        || actionName.startsWith("org.omnirom.omniswitch")) {
+                        || actionName.startsWith("org.omnirom.omniswitch")
+                        || actionName.startsWith("masquerade.substratum.STATUS_CHANGED")) {
                     return true;
                 }
             }
