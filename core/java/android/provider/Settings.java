@@ -5235,12 +5235,19 @@ public final class Settings {
          */
         public static final String RECENT_CARD_TEXT_COLOR = "recent_card_text_color";
 
-	    /**
+        /**
          * show the membar in slim recents
          *  @hide
          */
         public static final String SLIM_RECENTS_MEM_DISPLAY = "slim_recents_mem_display";
 
+        /**
+         * Use the membar in slim recents as clear all button on longclick
+         *  @hide
+         */
+        public static final String SLIM_RECENTS_MEM_DISPLAY_LONG_CLICK_CLEAR =
+                "slim_recents_mem_display_long_click_clear";
+		
         /**
          * Whether to use slim recent app sidebar
          * @hide
