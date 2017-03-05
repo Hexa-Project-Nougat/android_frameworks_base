@@ -110,6 +110,7 @@ import com.android.internal.logging.MetricsProto.MetricsEvent;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.util.omni.OmniSwitchConstants;
+import com.android.internal.util.rr.RRUtils;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.KeyguardUpdateMonitor;
@@ -1652,22 +1653,21 @@ public abstract class BaseStatusBar extends SystemUI implements
 	
     protected void showRecents(boolean triggeredFromAltTab, boolean fromHome) {
         if (isOmniSwitchEnabled()) {
-            if (!mScreenPinningEnabled) {
-                Intent showIntent = new Intent(OmniSwitchConstants.ACTION_SHOW_OVERLAY);
-                mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
+            Intent showIntent = new Intent(RRUtils.ACTION_SHOW_OVERLAY);
+            mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
             }
         } else {
 			if (mRecents != null) {
 				sendCloseSystemWindows(SYSTEM_DIALOG_REASON_RECENT_APPS);
 				mRecents.showRecents(triggeredFromAltTab, fromHome);
 			}
-        }
     }
 
     protected void hideRecents(boolean triggeredFromAltTab, boolean triggeredFromHomeKey) {
         if (isOmniSwitchEnabled()) {
+            Intent showIntent = new Intent(RRUtils.ACTION_HIDE_OVERLAY);
+            mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
             if (!mScreenPinningEnabled) {
-                Intent showIntent = new Intent(OmniSwitchConstants.ACTION_HIDE_OVERLAY);
                 mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
             }
         } else if (mSlimRecents != null) {
@@ -1679,8 +1679,9 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     protected void toggleRecents() {
         if (isOmniSwitchEnabled()) {
+            Intent showIntent = new Intent(RRUtils.ACTION_TOGGLE_OVERLAY);
+            mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
             if (!mScreenPinningEnabled) {
-                Intent showIntent = new Intent(OmniSwitchConstants.ACTION_TOGGLE_OVERLAY);
                 mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
             }	
         } else if (mSlimRecents != null) {
