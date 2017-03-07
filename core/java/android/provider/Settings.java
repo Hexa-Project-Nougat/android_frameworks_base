@@ -7946,6 +7946,12 @@ public final class Settings {
         public static final String WAKE_GESTURE_ENABLED = "wake_gesture_enabled";
 
         /**
+         * Enable single click to turn Location services on or off.
+         * @hide
+         */
+        public static final String QS_LOCATION_EASY_TOGGLE = "qs_location_easy_toggle";
+
+        /**
          * Whether the device should doze if configured.
          * @hide
          */
