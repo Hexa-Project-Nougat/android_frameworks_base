@@ -50,6 +50,8 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
         mBattery = mView.findViewById(R.id.battery);
         mClock = mView.findViewById(R.id.clock);
         mNetworkTraffic = mView.findViewById(R.id.networkTraffic);
+        mWeatherTextView = mView.findViewById(R.id.weather_temp);
+        mWeatherImageView = mView.findViewById(R.id.weather_image);
         applyModeBackground(-1, getMode(), false /*animate*/);
         applyMode(getMode(), false /*animate*/);
     }
