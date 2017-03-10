@@ -717,6 +717,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                      Settings.System.CLEAR_RECENTS_STYLE), false, this, UserHandle.USER_ALL);
              resolver.registerContentObserver(Settings.System.getUriFor(
                      Settings.System.CLEAR_RECENTS_STYLE_ENABLE), false, this, UserHandle.USER_ALL);
+             resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.EMPTY_SHADE_VIEW_SHOW_CARRIER_NAME),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.EMPTY_SHADE_VIEW_SHOW_WIFI_NAME),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.EMPTY_SHADE_VIEW_TEXT_COLOR),
+                    false, this, UserHandle.USER_ALL);
              update();
          }
 		
@@ -772,6 +781,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                      checkBarModes();
                      updateClearAll();
                      updateEmptyShadeView();
+           } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.EMPTY_SHADE_VIEW_SHOW_CARRIER_NAME))) {
+                UpdateEmptyShadeShowCarrierName();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.EMPTY_SHADE_VIEW_SHOW_WIFI_NAME))) {
+                UpdateEmptyShadeShowWifiName();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.EMPTY_SHADE_VIEW_TEXT_COLOR))) {
+                UpdateEmptyShadeTextColor();
              }
              update();
  		}
@@ -818,6 +836,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             // update recents
             updateRecents();
             rebuildRecentsScreen();
+			
+            UpdateEmptyShadeShowCarrierName();
+            UpdateEmptyShadeShowWifiName();
+            UpdateEmptyShadeTextColor();
          }
 
          protected void unobserve() {
@@ -1456,6 +1478,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         });
         mNetworkController = new NetworkControllerImpl(mContext, mHandlerThread.getLooper());
         mNetworkController.setUserSetupComplete(mUserSetup);
+        mEmptyShadeView.setNetworkController(mNetworkController);
         mHotspotController = new HotspotControllerImpl(mContext);
         mBluetoothController = new BluetoothControllerImpl(mContext, mHandlerThread.getLooper());
         mSecurityController = new SecurityControllerImpl(mContext);
@@ -2658,7 +2681,32 @@ mWeatherTempSize, mWeatherTempFontStyle, mWeatherTempColor);
         boolean showEmptyShade =
                 mState != StatusBarState.KEYGUARD &&
                         mNotificationData.getActiveNotifications().size() == 0;
+        mEmptyShadeView.setListening(showEmptyShade);
         mNotificationPanel.setShadeEmpty(showEmptyShade);
+    }
+
+    private void UpdateEmptyShadeShowCarrierName() {
+        final boolean show = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.EMPTY_SHADE_VIEW_SHOW_CARRIER_NAME, 0) == 1;
+        if (mEmptyShadeView != null) {
+            mEmptyShadeView.setShowCarrierName(show);
+        }
+    }
+
+    private void UpdateEmptyShadeShowWifiName() {
+        final boolean show = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.EMPTY_SHADE_VIEW_SHOW_WIFI_NAME, 0) == 1;
+        if (mEmptyShadeView != null) {
+            mEmptyShadeView.setShowWifiName(show);
+        }
+    }
+
+    private void UpdateEmptyShadeTextColor() {
+        int color = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.EMPTY_SHADE_VIEW_TEXT_COLOR, 0xffffffff);
+        if (mEmptyShadeView != null) {
+            mEmptyShadeView.updateTextColor(color);
+        }
     }
 
     private void updateSpeedbump() {

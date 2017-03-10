@@ -3600,6 +3600,24 @@ public final class Settings {
         public static final String KEY_VOICEMAIL_BREATH = "voicemail_breath";
 
         /**
+         * Whether to show the carrier name on the empty shade view
+         * @hide
+         */
+        public static final String EMPTY_SHADE_VIEW_SHOW_CARRIER_NAME = "empty_shade_view_show_carrier_name";
+
+        /**
+         * Whether to show the wifi name on the empty shade view
+         * @hide
+         */
+        public static final String EMPTY_SHADE_VIEW_SHOW_WIFI_NAME = "empty_shade_view_show_wifi_name";
+
+        /**
+         * Color of the text on the empty shade view
+        * @hide
+         */
+        public static final String EMPTY_SHADE_VIEW_TEXT_COLOR = "empty_shade_view_text_color";
+
+        /**
          * @deprecated Use {@link android.provider.Settings.Global#KEY_SMS_BREATH} instead
          */
         @Deprecated
