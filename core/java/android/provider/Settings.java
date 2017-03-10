@@ -5316,6 +5316,12 @@ public final class Settings {
          * @hide
          */
         public static final String DISABLE_FC_NOTIFICATIONS = "disable_fc_notifications";
+		
+        /**
+         * Switch to add confirmation to power Dialog
+         * @hide
+         */
+        public static final String CONFIRM_SHUTDOWN_SWITCH = "confirm_shutdown_switch";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
