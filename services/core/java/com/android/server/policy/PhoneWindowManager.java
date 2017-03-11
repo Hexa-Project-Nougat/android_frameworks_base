@@ -1012,14 +1012,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             if (ActionHandler.INTENT_SHOW_POWER_MENU.equals(action)) {
                 mHandler.removeMessages(MSG_DISPATCH_SHOW_GLOBAL_ACTIONS);
                 mHandler.sendEmptyMessage(MSG_DISPATCH_SHOW_GLOBAL_ACTIONS);
-            } else if (ActionHandler.INTENT_SCREENSHOT.equals(action)) {
-                mHandler.removeCallbacks(mScreenshotRunnable);
-                mScreenshotRunnable.setScreenshotType(TAKE_SCREENSHOT_FULLSCREEN);
-                mHandler.post(mScreenshotRunnable);
-            } else if (ActionHandler.INTENT_REGION_SCREENSHOT.equals(action)) {
-                mHandler.removeCallbacks(mScreenshotRunnable);
-                mScreenshotRunnable.setScreenshotType(TAKE_SCREENSHOT_SELECTED_REGION);
-                mHandler.post(mScreenshotRunnable);
             } else if (ActionHandler.INTENT_TOGGLE_SCREENRECORD.equals(action)) {
                 mHandler.removeCallbacks(mScreenrecordRunnable);
                 mHandler.post(mScreenrecordRunnable);
@@ -2260,9 +2252,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // DU action handler
         filter = new IntentFilter();
         filter.addAction(ActionHandler.INTENT_SHOW_POWER_MENU);
-        filter.addAction(ActionHandler.INTENT_SCREENSHOT);
         filter.addAction(ActionHandler.INTENT_TOGGLE_SCREENRECORD);
-        filter.addAction(ActionHandler.INTENT_REGION_SCREENSHOT);
         context.registerReceiver(mDUReceiver, filter);
 
         // monitor for system gestures
