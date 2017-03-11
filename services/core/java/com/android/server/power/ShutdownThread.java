@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2008 The Android Open Source Project
  * Copyright (C) 2013 The CyanogenMod Project
@@ -214,7 +215,7 @@ public final class ShutdownThread extends Thread {
                                     ? com.android.internal.R.string.global_action_reboot
                                     : com.android.internal.R.string.power_off);
 
-            if (!advancedReboot || mRebootSafeMode) {
+            if (!advancedReboot || !mReboot || mRebootSafeMode) {
                 confirmDialogBuilder.setMessage(resourceId);
             } else {
                 confirmDialogBuilder
