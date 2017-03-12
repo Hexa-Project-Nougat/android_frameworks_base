@@ -5317,14 +5317,6 @@ public final class Settings {
                 "recent_app_sidebar_open_simultaneously";
 
         /**
-         * Whether to show the kill app button in notification guts
-         *
-         * @hide
-         */
-        public static final String NOTIFICATION_GUTS_KILL_APP_BUTTON =
-                "notification_guts_kill_app_button";
-
-        /**
          * @hide
          */
         public static final String OMNIJAWS_WEATHER_ICON_PACK = "omnijaws_weather_icon_pack";
