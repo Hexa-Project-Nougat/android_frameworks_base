@@ -1603,12 +1603,12 @@ public abstract class BaseStatusBar extends SystemUI implements
         if (isOmniSwitchEnabled()) {
             Intent showIntent = new Intent(RRUtils.ACTION_SHOW_OVERLAY);
             mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
-            }
         } else {
 			if (mRecents != null) {
 				sendCloseSystemWindows(SYSTEM_DIALOG_REASON_RECENT_APPS);
 				mRecents.showRecents(triggeredFromAltTab, fromHome);
 			}
+		}
     }
 
     protected void hideRecents(boolean triggeredFromAltTab, boolean triggeredFromHomeKey) {

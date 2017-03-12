@@ -130,7 +130,6 @@ public class RecentsView extends FrameLayout {
     private TaskStackView mTaskStackView;
     private TextView mStackActionButton;
     private TextView mEmptyView;
-    private SettingsObserver mSettingsObserver;
     private boolean showClearAllRecents;
 	
     public int mClearStyle;
@@ -701,7 +700,7 @@ public class RecentsView extends FrameLayout {
         boolean showDate = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.RECENTS_FULL_SCREEN_DATE, 0, UserHandle.USER_CURRENT) != 0;
         boolean fullscreenEnabled = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.IMMERSIVE_RECENTS, 0, UserHandle.USER_CURRENT) != 0;
+                Settings.System.RECENTS_FULL_SCREEN, 0, UserHandle.USER_CURRENT) != 0;
 
         if (fullscreenEnabled) {
             if (showClock) {
