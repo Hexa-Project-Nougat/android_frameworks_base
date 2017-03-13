@@ -92,6 +92,9 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
 
 	private TextView mWeather;
 	private TextView mWeatherLeft;
+    private ImageView mWeatherImageView;
+    private ImageView mLeftWeatherImageView;
+    private int mStatusBarWeatherEnabled;
 
     private int mIconSize;
     private int mIconHPadding;
@@ -153,10 +156,11 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
 
         mDarkModeIconColorSingleTone = context.getColor(R.color.dark_mode_icon_color_single_tone);
         mLightModeIconColorSingleTone = context.getColor(R.color.light_mode_icon_color_single_tone);
-
         mCarrierLabel = (TextView) statusBar.findViewById(R.id.statusbar_carrier_text);
 		mWeather = (TextView) statusBar.findViewById(R.id.weather_temp);
 		mWeatherLeft = (TextView) statusBar.findViewById(R.id.left_weather_temp);
+        mWeatherImageView = (ImageView) statusBar.findViewById(R.id.weather_image);
+        mLeftWeatherImageView = (ImageView) statusBar.findViewById(R.id.left_weather_image);
         mHandler = new Handler();
         mClockController = new ClockController(statusBar, mNotificationIconAreaController, mHandler);
         mCenterClockLayout = statusBar.findViewById(R.id.center_clock_layout);
@@ -366,7 +370,12 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
         if (Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE, 0,
                 UserHandle.USER_CURRENT) == 1) {
-        animateHide(mWeatherLeft,animate);
+        animateHide(mLeftWeatherImageView,animate);
+               if (mStatusBarWeatherEnabled == 0 || mStatusBarWeatherEnabled == 5) {
+                   return;
+               } else {
+                  animateHide(mWeatherLeft,animate);
+               }
         }
 
     }
@@ -387,7 +396,12 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
         if (Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE, 0,
                 UserHandle.USER_CURRENT) == 1) {
-        animateShow(mWeatherLeft,animate);
+        animateShow(mLeftWeatherImageView,animate);
+               if (mStatusBarWeatherEnabled == 0 || mStatusBarWeatherEnabled == 5) {
+                   return;
+               } else {
+                  animateShow(mWeatherLeft,animate);
+               }
         }
     }
 
@@ -608,6 +622,14 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
                 getColor(R.color.status_bar_clock_color)) {
         mCarrierLabel.setTextColor(mIconTint);
         }
+		
+        if (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_WEATHER_IMAGE_COLOR, 0xFFFFFFFF,
+                UserHandle.USER_CURRENT) == 0xFFFFFFFF) {
+        mWeatherImageView.setImageTintList(ColorStateList.valueOf(mIconTint));
+        mLeftWeatherImageView.setImageTintList(ColorStateList.valueOf(mIconTint));
+        }
+		
         if (Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.STATUS_BAR_WEATHER_COLOR, 0xFFFFFFFF,
                 UserHandle.USER_CURRENT) == 0xFFFFFFFF) {
@@ -750,6 +772,10 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
          resolver.registerContentObserver(Settings.System
                  .getUriFor(Settings.System.HIDE_CARRIER_MAX_NOTIFICATION),
                  false, this, UserHandle.USER_CURRENT);
+         resolver.registerContentObserver(Settings.System
+                 .getUriFor(Settings.System.STATUS_BAR_SHOW_WEATHER_TEMP),
+                 false, this, UserHandle.USER_CURRENT);
+         update();
     }
 
     @Override
@@ -762,6 +788,12 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
             Settings.System.HIDE_CARRIER_MAX_NOTIFICATION))) {
             carrierLabelVisibility();
             }
+        }
+
+	public void update() {
+    mStatusBarWeatherEnabled = Settings.System.getIntForUser(
+                mContext.getContentResolver(), Settings.System.STATUS_BAR_SHOW_WEATHER_TEMP, 0,
+                UserHandle.USER_CURRENT);
         }
     }
 }
