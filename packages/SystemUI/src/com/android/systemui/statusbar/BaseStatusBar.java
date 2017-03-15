@@ -1599,8 +1599,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     }
 	
     protected void showRecents(boolean triggeredFromAltTab, boolean fromHome) {
-        if (Settings.System.getInt(
-		mContext.getContentResolver(), Settings.System.RECENTS_USE_OMNISWITCH, 1) == 1) {
+        if (isOmniSwitchEnabled()) {
             Intent showIntent = new Intent(RRUtils.ACTION_SHOW_OVERLAY);
             mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
         } else {
@@ -1612,8 +1611,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     }
 
     protected void hideRecents(boolean triggeredFromAltTab, boolean triggeredFromHomeKey) {
-        if (Settings.System.getInt(
-		mContext.getContentResolver(), Settings.System.RECENTS_USE_OMNISWITCH, 1) == 1) {
+        if (isOmniSwitchEnabled()) {
             Intent showIntent = new Intent(RRUtils.ACTION_HIDE_OVERLAY);
             mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
             if (!mScreenPinningEnabled) {
@@ -1627,8 +1625,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     }
 
     protected void toggleRecents() {
-        if (Settings.System.getInt(
-		mContext.getContentResolver(), Settings.System.RECENTS_USE_OMNISWITCH, 1) == 1) {
+        if (isOmniSwitchEnabled()) {
             Intent showIntent = new Intent(RRUtils.ACTION_TOGGLE_OVERLAY);
             mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
             if (!mScreenPinningEnabled) {
@@ -1643,8 +1640,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     }
 
     protected void preloadRecents() {
-        if (Settings.System.getInt(
-		mContext.getContentResolver(), Settings.System.RECENTS_USE_OMNISWITCH, 0) == 1) {
+        if (!isOmniSwitchEnabled()) {
             if (mRecents != null) {
                 mRecents.showNextAffiliatedTask();
             }
@@ -1664,8 +1660,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     }
 
     protected void cancelPreloadingRecents() {
-        if (Settings.System.getInt(
-		mContext.getContentResolver(), Settings.System.RECENTS_USE_OMNISWITCH, 0) == 1) {
+        if (!isOmniSwitchEnabled()) {
             if (mRecents != null) {
                 mRecents.showNextAffiliatedTask();
             }
@@ -1677,8 +1672,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     }
 
     protected void showRecentsNextAffiliatedTask() {
-        if (Settings.System.getInt(
-		mContext.getContentResolver(), Settings.System.RECENTS_USE_OMNISWITCH, 0) == 1) {
+        if (!isOmniSwitchEnabled()) {
             if (mRecents != null) {
                 mRecents.showNextAffiliatedTask();
             }
@@ -1686,8 +1680,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     }
 
     protected void showRecentsPreviousAffiliatedTask() {
-        if (Settings.System.getInt(
-		mContext.getContentResolver(), Settings.System.RECENTS_USE_OMNISWITCH, 0) == 1) {
+        if (!isOmniSwitchEnabled()) {
             if (mRecents != null) {
                 mRecents.showPrevAffiliatedTask();
             }
