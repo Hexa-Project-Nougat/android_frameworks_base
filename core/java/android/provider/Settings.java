@@ -4504,121 +4504,7 @@ public final class Settings {
          * 2 = use custom color
          * @hide
          */
-<<<<<<< HEAD
         public static final String QS_STROKE = "qs_stroke";
-=======
-        public static final String LOCK_SCREEN_CUSTOM_NOTIF = "lock_screen_custom_notif";
-
-        /**
-         * custom lockscreen max notification config
-         * @hide
-         */
-        public static final String LOCKSCREEN_MAX_NOTIF_CONFIG = "lockscreen_max_notif_cofig";
-
-        /**
-         * Status bar weather temperature
-         * 0: Hide the temperature
-         * 1: Display the temperature with scale and image
-         * 2: Display the temperature without scale and with image
-         * 3: Display the temparature with scale and without image
-         * 4: Display the temperature without scale and without image
-         * 5: Display the temperature image
-         * @hide
-         */
-        public static final String STATUS_BAR_SHOW_WEATHER_TEMP = "status_bar_show_weather_temp";
-
-        /**
-         * Style of Weather Temp
-         * 0 - Right (default)
-         * 1 - Left
-         * @hide
-         */
-        public static final String STATUS_BAR_WEATHER_TEMP_STYLE = "status_bar_weather_temp_style";
-
-        /**
-         * Statusbar weather font size setting
-         * @hide
-         */
-        public static final String STATUS_BAR_WEATHER_SIZE = "status_bar_weather_size";
-
-        /**
-         * Statusbar weather font style setting
-         * @hide
-         */
-        public static final String STATUS_BAR_WEATHER_FONT_STYLE = "status_bar_weather_font_style";
-
-        /**
-         * Statusbar weather color setting
-         * @hide
-         */
-        public static final String STATUS_BAR_WEATHER_COLOR = "status_bar_weather_color";
-
-        /**
-         * Statusbar weather color setting
-         * @hide
-         */
-        public static final String STATUS_BAR_WEATHER_IMAGE_COLOR = "status_bar_weather_image_color";
-
-
-        /*
-         * Dyanamic Navbar Switch
-         * @hide
-         */
-        public static final String NAV_BAR_DYNAMIC = "nav_bar_dynamic";
-
-        /*
-         * Whether to show the weather info on the lock screen
-         * @hide
-         */
-        public static final String LOCK_SCREEN_SHOW_WEATHER = "lock_screen_show_weather";
-
-        /**
-         * Whether to show the weather location lock screen
-         * @hide
-         */
-        public static final String LOCK_SCREEN_SHOW_WEATHER_LOCATION = "lock_screen_show_weather_location";
-
-        /**
-         * Whether to show the weather update timestamp on the lock screen
-         * @hide
-         */
-        public static final String LOCK_SCREEN_SHOW_WEATHER_TIMESTAMP = "lock_screen_show_weather_timestamp";
-
-        /**
-         * Weather condition icon on the lock screen
-         * 0: monochrome
-         * 1: colored
-         * 2: vclouds
-         * default: 0
-         * @hide
-         */
-        public static final String LOCK_SCREEN_WEATHER_CONDITION_ICON = "lock_screen_weather_condition_icon";
-
-        /**
-         * Whether to hide the weather panel when the notifications will reach the number of notifications
-         * @hide
-         */
-        public static final String LOCK_SCREEN_WEATHER_HIDE_PANEL = "lock_screen_weather_hide_panel";
-
-        /**
-         * Whether to hide Settings drawer
-         * @hide
-         */
-        public static final String SHOW_SETTINGS_DRAWER = "show_settings_drawer";
-
-
-	/*
-         * show clear all recents button
-         *  @hide
-         */
-        public static final String SHOW_CLEAR_ALL_RECENTS = "show_clear_all_recents";
-
-        /**
-         * location of the clear all rectents button
-         * @hide
-         */
-        public static final String  RECENTS_CLEAR_ALL_LOCATION = "recents_clear_all_location";
->>>>>>> aa3e13e36df... Statusbar Weather : Refactor [1/2]
 
 
         /**
@@ -5103,6 +4989,12 @@ public final class Settings {
          * @hide
          */
         public static final String LOCK_SCREEN_SHOW_WEATHER_TIMESTAMP = "lock_screen_show_weather_timestamp";
+		
+        /**
+         * Statusbar weather color setting
+         * @hide
+         */
+        public static final String STATUS_BAR_WEATHER_IMAGE_COLOR = "status_bar_weather_image_color";
 		
         /**
          * Whether to hide the weather panel when the notifications will reach the number of notifications
