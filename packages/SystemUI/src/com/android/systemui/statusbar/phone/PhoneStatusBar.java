@@ -237,11 +237,6 @@ import com.android.systemui.slimrecent.RecentController;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.volume.VolumeComponent;
 
-import com.android.systemui.rr.statusbarweather.StatusBarWeather;
-import com.android.systemui.rr.statusbarweather.StatusBarWeatherImage;
-import com.android.systemui.rr.statusbarweather.StatusBarWeatherLeft;
-import com.android.systemui.rr.statusbarweather.StatusBarWeatherImageLeft;
-
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -437,13 +432,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private boolean mWakeUpComingFromTouch;
     private PointF mWakeUpTouchLocation;
     private boolean mScreenTurningOn;
-
-    // Weather temperature
-    private StatusBarWeather mWeatherTempView;
-    private StatusBarWeatherImage mWeatherImageView;
-    private StatusBarWeatherLeft mWeatherTempViewLeft;
-    private StatusBarWeatherImageLeft mWeatherImageViewLeft;
-    private int mWeatherTempStyle;
 
     int mPixelFormat;
     Object mQueueLock = new Object();
@@ -653,9 +641,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.Secure.LOCK_QS_DISABLED),
                     false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE),
-                    false, this, UserHandle.USER_ALL);
            resolver.registerContentObserver(Settings.System.getUriFor(
                   Settings.System.DATA_ACTIVITY_ARROWS),
                   false, this, UserHandle.USER_ALL);
@@ -704,9 +689,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVBAR_BUTTON_COLOR))) {
                     mNavigationController.updateNavbarOverlay(mContext.getResources());
-	 			} else if (uri.equals(Settings.System.getUriFor(
-	  					Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE))){
-					updateTempView();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.DATA_ACTIVITY_ARROWS))) {
                     mDataWifiActivityArrows = Settings.System.getIntForUser(
@@ -750,10 +732,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             boolean showTaskManager = Settings.System.getIntForUser(resolver,
                     Settings.System.ENABLE_TASK_MANAGER, 0, UserHandle.USER_CURRENT) == 1;
 
-            mWeatherTempStyle = Settings.System.getIntForUser(mContext.getContentResolver(), 
-                    Settings.System.STATUS_BAR_WEATHER_TEMP_STYLE, 0,
-                    UserHandle.USER_CURRENT);
-
             boolean mDataWifiActivityArrows = Settings.System.getIntForUser(resolver,
                     Settings.System.DATA_ACTIVITY_ARROWS, 0, UserHandle.USER_CURRENT) == 1;
 			
@@ -771,7 +749,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 					mNotificationPanel.updateSettings();
                 }
             }
-			updateTempView();
 			// Update StatusBar Header Machine when Custom Header Shadow changed
 			mStatusBarHeaderMachine.updateEnablement();
 			
@@ -789,22 +766,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
              resolver.unregisterContentObserver(this);
          }
      }
-
-    private void updateTempView() {
-        if (mWeatherTempView != null) {
-            if (mWeatherTempStyle == 0) {
-            mWeatherTempView = (StatusBarWeather) mStatusBarView.findViewById(R.id.weather_temp);
-                if (mWeatherImageView != null) {
-                    mWeatherImageView = (StatusBarWeatherImage) mStatusBarView.findViewById(R.id.weather_image);
-                }
-            } else {
-            mWeatherTempViewLeft = (StatusBarWeatherLeft) mStatusBarView.findViewById(R.id.left_weather_temp);
-            if (mWeatherImageView != null) {
-                mWeatherImageViewLeft = (StatusBarWeatherImageLeft) mStatusBarView.findViewById(R.id.left_weather_image);
-            }
-         }
-      }
-    }
 
     // ensure quick settings is disabled until the current user makes it through the setup wizard
     private boolean mUserSetup = false;
@@ -1359,8 +1320,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (UserManager.get(mContext).isUserSwitcherEnabled()) {
             createUserSwitcher();
         }
-
-		updateTempView();
 
         mStatusBarHeaderMachine = new StatusBarHeaderMachine(mContext);
 
