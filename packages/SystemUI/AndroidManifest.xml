@@ -206,8 +206,6 @@
     <!-- OmniJaws -->
     <uses-permission android:name="org.omnirom.omnijaws.READ_WEATHER" />
 
-    <protected-broadcast android:name="android.intent.action.SCREEN_STATE_SERVICE_UPDATE" />
-
     <application
         android:name=".SystemUIApplication"
         android:persistent="true"
@@ -267,19 +265,6 @@
         <service android:name=".omni.screenrecord.TakeScreenrecordService"
             android:process=":screenrecord"
             android:exported="false" />
-
-        <receiver android:name=".BootReceiver" androidprv:systemUserOnly="true">
-            <intent-filter android:priority="1000">
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-       </receiver>
-
-        <service android:name=".screenstate.ScreenStateService"
-                android:exported="true" >
-            <intent-filter>
-               <android name="android.intent.action.SCREEN_STATE_SERVICE_UPDATE"/>
-            </intent-filter>
-        </service>
 
         <service android:name=".ImageWallpaper"
                 android:permission="android.permission.BIND_WALLPAPER"
