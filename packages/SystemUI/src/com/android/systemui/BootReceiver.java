@@ -33,6 +33,7 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         try {
+			ContentResolver res = context.getContentResolver();
 
             // start the screen state service if activated
             if (Settings.System.getInt(res, Settings.System.START_SCREEN_STATE_SERVICE, 0) != 0) {
