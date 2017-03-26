@@ -688,13 +688,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
              } else if (uri.equals(Settings.Secure.getUriFor(
                      Settings.Secure.QS_COLUMNS))) {
                      updateResources();
-           }  else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.NAVBAR_TINT_SWITCH))) {
-                    mNavigationController.updateNavbarOverlay(mContext.getResources());
-           } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.NAVBAR_BUTTON_COLOR))) {
-                    mNavigationController.updateNavbarOverlay(mContext.getResources());
-           } else if (uri.equals(Settings.System.getUriFor(
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVBAR_TINT_SWITCH))
+                    || uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVBAR_BUTTON_COLOR))
+                    || uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVBAR_BUTON_CUSTOM_ICON_SWITCH))
+                    || uri.equals(Settings.System.getUriFor(
                     Settings.System.NAV_BAR_DYNAMIC))) {
                     mNavigationController.updateNavbarOverlay(mContext.getResources());
             } else if (uri.equals(Settings.System.getUriFor(

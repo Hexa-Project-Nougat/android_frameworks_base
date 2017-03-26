@@ -3927,6 +3927,12 @@ public final class Settings {
         @ChaosLab(name="GestureAnywhere", classification=Classification.NEW_FIELD)
         public static final String GESTURE_ANYWHERE_POSITION = "gesture_anywhere_position";
 
+        /**
+         * Navbar Button Custom icon Color Switch
+         * @hide
+         */
+        public static final String NAVBAR_BUTON_CUSTOM_ICON_SWITCH = "navbar_button_custom_icon_switch";
+
  	/**
          * Three Finger Gesture from Oppo
          *
