@@ -672,7 +672,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.NAVBAR_BUTON_CUSTOM_ICON_SWITCH),
                     false, this, UserHandle.USER_ALL);
            resolver.registerContentObserver(Settings.System.getUriFor(
-                  Settings.System.NAV_BAR_DYNAMIC),
+                  Settings.System.NAVBAR_DYNAMIC),
                   false, this, UserHandle.USER_ALL);
              update();
          }
@@ -695,7 +695,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     || uri.equals(Settings.System.getUriFor(
                     Settings.System.NAVBAR_BUTON_CUSTOM_ICON_SWITCH))
                     || uri.equals(Settings.System.getUriFor(
-                    Settings.System.NAV_BAR_DYNAMIC))) {
+                    Settings.System.NAVBAR_DYNAMIC))) {
                     mNavigationController.updateNavbarOverlay(mContext.getResources());
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.DATA_ACTIVITY_ARROWS))) {
