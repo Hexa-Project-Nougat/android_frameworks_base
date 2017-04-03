@@ -8159,6 +8159,12 @@ public final class Settings {
         public static final String WAKE_GESTURE_ENABLED = "wake_gesture_enabled";
 
         /**
+         * Enable Volume Up to disable all overlays during boot.
+         * @hide
+         */
+        public static final String VOL_UP_DISABLE_OVERLAYS = "vol_up_disable_overlays";
+
+        /**
          * Whether the device should doze if configured.
          * @hide
          */
