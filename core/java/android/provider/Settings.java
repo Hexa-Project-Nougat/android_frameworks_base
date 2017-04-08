@@ -5196,10 +5196,22 @@ public final class Settings {
         public static final String QS_DATE_TIME_CENTER = "qs_date_time_center";
 
         /**
-         * Vibrate on pulsing while pickup
+         * Vibrate when pulsing notifications on tilt
          * @hide
          */
-        public static final String DOZE_VIBRATE_ON_PICKUP = "doze_vibrate_on_pickup";
+        public static final String DOZE_VIBRATE_TILT = "doze_vibrate_tilt";
+
+        /**
+         * Vibrate when pulsing notifications on pick up
+         * @hide
+         */
+        public static final String DOZE_VIBRATE_PICKUP = "doze_vibrate_pickup";
+
+        /**
+         * Vibrate when pulsing notifications using proximity sensor
+         * @hide
+         */
+        public static final String DOZE_VIBRATE_PROX = "doze_vibrate_prox";
 
         /**
          * Check proximity sensor before pulsing
