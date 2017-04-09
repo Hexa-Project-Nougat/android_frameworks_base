@@ -810,8 +810,10 @@ public class NetworkControllerImpl extends BroadcastReceiver
                             datatype.equals("h+") ? TelephonyIcons.HP :
                             datatype.equals("lte") ? TelephonyIcons.LTE :
                             datatype.equals("lte+") ? TelephonyIcons.LTE_PLUS :
-                            datatype.equals("roam") ? TelephonyIcons.ROAMING :
                             TelephonyIcons.UNKNOWN;
+                }
+                if (args.containsKey("roam")) {
+                    controller.getState().roaming = "show".equals(args.getString("roam"));
                 }
                 int[][] icons = TelephonyIcons.TELEPHONY_SIGNAL_STRENGTH;
                 String level = args.getString("level");
@@ -823,6 +825,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 String activity = args.getString("activity");
                 if (activity != null) {
                     controller.getState().dataConnected = true;
+					// For now, disable this -- the setActivity just below, is Android-7.1.2 changes.
+					//controller.setActivity(Integer.parseInt(activity));
                     switch (activity) {
                         case "inout":
                             controller.setActivity(TelephonyManager.DATA_ACTIVITY_INOUT);
