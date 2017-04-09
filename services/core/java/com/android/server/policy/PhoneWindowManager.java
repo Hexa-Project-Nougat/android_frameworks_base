@@ -1170,6 +1170,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             resolver.registerContentObserver(CMSettings.System.getUriFor(
                     CMSettings.System.NAVBAR_LEFT_IN_LANDSCAPE), false, this,
                     UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_RECENTS), false, this,
+                    UserHandle.USER_ALL);
             updateSettings();
         }
 
@@ -2764,8 +2767,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mPieState = (Settings.System.getIntForUser(resolver,
                     Settings.System.PA_PIE_STATE, 0, UserHandle.USER_CURRENT) == 1);
 
-            mOmniSwitchRecents = (Settings.System.getIntForUser(resolver,
-                    Settings.System.NAVIGATION_BAR_RECENTS, 0, UserHandle.USER_CURRENT) == 1);
+            mOmniSwitchRecents = Settings.System.getIntForUser(resolver,
+                    Settings.System.NAVIGATION_BAR_RECENTS, 0,
+                    UserHandle.USER_CURRENT) == 1;
 
         }
         synchronized (mWindowManagerFuncs.getWindowManagerLock()) {
