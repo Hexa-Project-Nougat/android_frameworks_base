@@ -5476,6 +5476,12 @@ public final class Settings {
          * @hide
          */
         public static final String DOT_COLOR_SWITCH = "dot_color_switch";
+		
+		/**
+        * Whether to show the heads up for dialer when heads up are disabled
+        * @hide
+        */
+       public static final String ALWAYS_HEADSUP_DIALER = "always_headsup_dialer";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
