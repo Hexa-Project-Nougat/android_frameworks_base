@@ -42,6 +42,9 @@ import java.util.List;
 
 /** Quick settings tile: Hotspot **/
 public class HotspotTile extends QSTile<QSTile.AirplaneBooleanState> {
+    static final Intent TETHER_SETTINGS = new Intent().setComponent(new ComponentName(
+             "com.android.settings", "com.android.settings.TetherSettings"));
+
     private final AnimationIcon mEnable =
             new AnimationIcon(R.drawable.ic_hotspot_enable_animation,
                     R.drawable.ic_hotspot_disable);
@@ -106,8 +109,7 @@ public class HotspotTile extends QSTile<QSTile.AirplaneBooleanState> {
 
     @Override
     public Intent getLongClickIntent() {
-        return new Intent().setComponent(new ComponentName(
-            "com.android.settings", "com.android.settings.Settings$TetherSettingsActivity"));
+        return new Intent(TETHER_SETTINGS);
     }
 
     @Override
