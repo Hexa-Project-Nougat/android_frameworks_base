@@ -322,8 +322,8 @@ status_t BootAnimation::readyToRun() {
     if (encryptedAnimation && (access(SYSTEM_ENCRYPTED_BOOTANIMATION_FILE, R_OK) == 0)) {
         mZipFileName = SYSTEM_ENCRYPTED_BOOTANIMATION_FILE;
     }
-    else if (access(getAnimationFileName(IMG_OEM), R_OK) == 0) {
-        mZipFileName = getAnimationFileName(IMG_OEM);
+    else if (access(OEM_BOOTANIMATION_FILE, R_OK) == 0) {
+        mZipFileName = OEM_BOOTANIMATION_FILE;
     }
     else if (access(SYSTEM_BOOTANIMATION_FILE, R_OK) == 0) {
         mZipFileName = SYSTEM_BOOTANIMATION_FILE;
