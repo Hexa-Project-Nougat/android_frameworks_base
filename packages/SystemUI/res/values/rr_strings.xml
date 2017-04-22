@@ -61,6 +61,7 @@
     <string name="omnijaws_label_default">Weather</string>
     <string name="omnijaws_current_text">Now</string>
     <string name="omnijaws_package_not_available">OmniJaws not available</string>
+    <string name="omnijaws_service_error_long">Error loading weather data</string>
 	
     <!-- Location Tile -->
     <string name="accessibility_quick_settings_location_battery_saving">Location reporting: battery saving mode.</string>
