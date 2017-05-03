@@ -405,9 +405,7 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
 
     @Override
     public void weatherError(int errorReason) {
-        if (mWeatherData != null) {
-            setVisibility(View.GONE);
-        }
+        //do nothing
     }
 
     @Override
