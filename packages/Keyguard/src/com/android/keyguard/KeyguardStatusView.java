@@ -341,6 +341,13 @@ public class KeyguardStatusView extends GridLayout implements
        }
      }  
 	 
+     @Override
+     public void weatherError(int errorReason) {
+         if (mWeatherData != null) {
+             setVisibility(View.GONE);
+         }
+     }
+	 
 	public void updateLockscreenFonts() {
         boolean isPrimary = UserHandle.getCallingUserId() == UserHandle.USER_OWNER;
         int lockClockFont = isPrimary ? getLockClockFont() : 0;
