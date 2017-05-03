@@ -344,7 +344,8 @@ public class KeyguardStatusView extends GridLayout implements
      @Override
      public void weatherError(int errorReason) {
          if (mWeatherData != null) {
-             setVisibility(View.GONE);
+             if (mWeatherView != null)
+                 mWeatherView.setVisibility(View.GONE);
          }
      }
 	 
