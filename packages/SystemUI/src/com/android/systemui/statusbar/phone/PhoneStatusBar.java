@@ -354,8 +354,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             "cmsystem:" + CMSettings.System.STATUS_BAR_BRIGHTNESS_CONTROL;
     private static final String NAVBAR_LEFT_IN_LANDSCAPE =
             "cmsystem:" + CMSettings.System.NAVBAR_LEFT_IN_LANDSCAPE;
-    private static final String STATUS_BAR_SHOW_TICKER =
-            "system:" + Settings.System.STATUS_BAR_SHOW_TICKER;
     private static final String NAVBAR_DYNAMIC =
             "system:" + Settings.System.NAVBAR_DYNAMIC;
     private static final String BLUR_SCALE_PREFERENCE_KEY =
@@ -690,6 +688,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.OMNIJAWS_WEATHER_ICON_PACK),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SHOW_TICKER),
+                    false, this, UserHandle.USER_ALL);
              update();
          }
 		
@@ -751,6 +752,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.OMNIJAWS_WEATHER_ICON_PACK))) {
                     mHeader.updateVisibilities();
                     mHeader.queryAndUpdateWeather();
+           } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_SHOW_TICKER))) {
+                mTickerEnabled = Settings.System.getIntForUser(
+                        mContext.getContentResolver(),
+                        Settings.System.STATUS_BAR_SHOW_TICKER,
+                        mContext.getResources().getBoolean(R.bool.enable_ticker)
+                        ? 1 : 1, UserHandle.USER_CURRENT);
+                initTickerView();
              }
              update();
  		}
@@ -1110,7 +1119,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 SCREEN_BRIGHTNESS_MODE,
                 STATUS_BAR_BRIGHTNESS_CONTROL,
 				NAVBAR_LEFT_IN_LANDSCAPE,
-                STATUS_BAR_SHOW_TICKER,
                 NAVBAR_DYNAMIC,
                 BLUR_SCALE_PREFERENCE_KEY,
                 BLUR_RADIUS_PREFERENCE_KEY,
@@ -6153,11 +6161,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                             Integer.parseInt(newValue) == 1;
                     mNavigationController.getBar().setLeftInLandscape(navLeftInLandscape);
 			}
-                break;
-            case STATUS_BAR_SHOW_TICKER:
-                mTickerEnabled =
-                        newValue != null && Integer.parseInt(newValue) == 1;
-                initTickerView();
                 break;
             case NAVBAR_DYNAMIC:
                 if (mNavigationController != null) {
