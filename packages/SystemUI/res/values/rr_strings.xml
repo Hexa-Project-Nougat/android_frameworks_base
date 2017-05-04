@@ -134,4 +134,5 @@
     <string name="recents_multiwin_nolastapp">You removed all recents, please choose an app from launcher or drawer.</string>
     <string name="slim_recent_keyguard">Unlock your device to view recents</string>
     <string name="slim_recent_pinned">Unpin the screen to view recents</string>
+	
 </resources>
