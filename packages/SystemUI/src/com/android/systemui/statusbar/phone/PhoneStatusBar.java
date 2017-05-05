@@ -752,13 +752,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.OMNIJAWS_WEATHER_ICON_PACK))) {
                     mHeader.updateVisibilities();
                     mHeader.queryAndUpdateWeather();
-           } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_SHOW_TICKER))) {
-                mTickerEnabled = Settings.System.getIntForUser(
-                        mContext.getContentResolver(),
-                        Settings.System.STATUS_BAR_SHOW_TICKER,
-                        mContext.getResources().getBoolean(R.bool.enable_ticker)
-                        ? 1 : 1, UserHandle.USER_CURRENT);
+                    mTickerEnabled = Settings.System.getIntForUser(
+                            mContext.getContentResolver(),
+                            Settings.System.STATUS_BAR_SHOW_TICKER,
+                            0, UserHandle.USER_CURRENT);
                 initTickerView();
              }
              update();
