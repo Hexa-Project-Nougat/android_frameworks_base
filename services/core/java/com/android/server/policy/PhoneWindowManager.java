@@ -2765,7 +2765,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Settings.System.PA_PIE_STATE, 0, UserHandle.USER_CURRENT) == 1);
 
             mOmniSwitchRecents = (Settings.System.getIntForUser(resolver,
-                    Settings.System.RECENTS_USE_OMNISWITCH, 0, UserHandle.USER_CURRENT) == 1);
+                    Settings.System.NAVIGATION_BAR_RECENTS, 0, UserHandle.USER_CURRENT) == 1);
 
         }
         synchronized (mWindowManagerFuncs.getWindowManagerLock()) {

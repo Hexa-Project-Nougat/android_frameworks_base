@@ -4031,7 +4031,7 @@ public final class Settings {
          * Alternative recent apps integration using OmniSwitch
          * @hide
          */
-        public static final String RECENTS_USE_OMNISWITCH = "recents_use_omniswitch";
+        public static final String NAVIGATION_BAR_RECENTS = "navigation_bar_recents";
 
         /**
          * Toast animations
