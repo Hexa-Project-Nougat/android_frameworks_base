@@ -43,6 +43,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -190,6 +191,9 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
         mWeatherEnabled = mWeatherClient.isOmniJawsEnabled();
         mWeatherContainer = (LinearLayout) findViewById(R.id.weather_container);
         mWeatherimage = (ImageView) findViewById(R.id.weather_image);
+		//TESTING START
+		mWeatherimage.setOnClickListener(this);
+		//TESTING END
         mNoWeatherimage = (ImageView) findViewById(R.id.no_weather_image);
         mWeatherLine1 = (TextView) findViewById(R.id.weather_line_1);
         mWeatherLine2 = (TextView) findViewById(R.id.weather_line_2);
@@ -541,6 +545,11 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
             startDateActivity();
         } else if (v == mTaskManagerButton) {
            mQsPanel.setenabled();
+	    } else if (v == mWeatherimage) {
+			//For debugging purpose
+            Toast.makeText(getContext(), R.string.debug_updating_weather_for_expanded_status_bar_header,
+                    Toast.LENGTH_LONG).show();
+	       queryAndUpdateWeather();
         }
     }
 
