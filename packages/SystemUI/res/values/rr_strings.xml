@@ -112,4 +112,7 @@
     <string name="slim_recent_keyguard">Unlock your device to view recents</string>
     <string name="slim_recent_pinned">Unpin the screen to view recents</string>
 	
+	<!-- FOR DEBUGGING PURPOSE --> 
+	<string name="debug_updating_weather_for_expanded_status_bar_header">Updating weather for StatusBar Header</string>
+	
 </resources>
