@@ -5214,12 +5214,6 @@ public final class Settings {
         public static final String DOZE_VIBRATE_PROX = "doze_vibrate_prox";
 
         /**
-         * Check proximity sensor before pulsing
-         * @hide
-         */
-        public static final String DOZE_PROXIMITY_CHECK_BEFORE_PULSE = "doze_check_proximity_before_pulse";
-
-        /**
          * Whether to display powermenu on secure lockscreen
          *
          * @hide
