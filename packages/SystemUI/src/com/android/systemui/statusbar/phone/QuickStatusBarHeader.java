@@ -191,11 +191,11 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
         mWeatherEnabled = mWeatherClient.isOmniJawsEnabled();
         mWeatherContainer = (LinearLayout) findViewById(R.id.weather_container);
         mWeatherimage = (ImageView) findViewById(R.id.weather_image);
-		//TESTING START
-		mWeatherimage.setOnClickListener(this);
-		//TESTING END
         mNoWeatherimage = (ImageView) findViewById(R.id.no_weather_image);
         mWeatherLine1 = (TextView) findViewById(R.id.weather_line_1);
+		//TESTING START
+		mWeatherLine1.setOnClickListener(this);
+		//TESTING END
         mWeatherLine2 = (TextView) findViewById(R.id.weather_line_2);
         queryAndUpdateWeather();
 
@@ -545,7 +545,7 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
             startDateActivity();
         } else if (v == mTaskManagerButton) {
            mQsPanel.setenabled();
-	    } else if (v == mWeatherimage) {
+	    } else if (v == mWeatherLine1) {
 			//For debugging purpose
             Toast.makeText(getContext(), R.string.debug_updating_weather_for_expanded_status_bar_header,
                     Toast.LENGTH_LONG).show();
