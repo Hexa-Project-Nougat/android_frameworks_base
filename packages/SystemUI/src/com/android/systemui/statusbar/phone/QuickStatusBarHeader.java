@@ -549,6 +549,7 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
 			//For debugging purpose
             Toast.makeText(getContext(), R.string.debug_updating_weather_for_expanded_status_bar_header,
                     Toast.LENGTH_LONG).show();
+		   mWeatherClient.updateWeather();
 	       queryAndUpdateWeather();
         }
     }
