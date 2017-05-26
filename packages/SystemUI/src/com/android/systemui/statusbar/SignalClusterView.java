@@ -230,9 +230,7 @@ public class SignalClusterView
         int endPadding = mMobileSignalGroup.getChildCount() > 0 ? mMobileSignalGroupEndPadding : 0;
         mMobileSignalGroup.setPaddingRelative(0, 0, endPadding, 0);
 
-        if (!mIgnoreSystemUITuner) {
 	            TunerService.get(mContext).addTunable(this, StatusBarIconController.ICON_BLACKLIST);
-	        }
 
         apply();
         applyIconTint();

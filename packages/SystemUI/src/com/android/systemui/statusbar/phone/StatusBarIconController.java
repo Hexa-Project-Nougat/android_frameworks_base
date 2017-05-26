@@ -693,16 +693,12 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
     public void applyIconTint() {
 	mColorSwitch =  Settings.System.getInt(mContext.getContentResolver(),
 				 Settings.System.STATUSBAR_COLOR_SWITCH, 0) == 1;	
-	int batterytext = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.BATTERY_TEXT_COLOR, 0xFFFFFFFF);
-        int mBatteryIconColor = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.BATTERY_ICON_COLOR, 0xFFFFFFFF);
         for (int i = 0; i < mStatusIcons.getChildCount(); i++) {
             StatusBarIconView v = (StatusBarIconView) mStatusIcons.getChildAt(i);
 			if (mColorSwitch) {
             v.setImageTintList(ColorStateList.valueOf(getTint(mTintArea, v, mStatusIconsColorTint)));
 			 } else {
-				 v.setImageTintList(ColorStateList.valueOf(getTint(mIconTint, v, mStatusIconsColorTint)));
+				 v.setImageTintList(ColorStateList.valueOf(getTint(mTintArea, v, mIconTint)));
 			 }
         }
 		if (mColorSwitch) {
@@ -998,7 +994,6 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
         mNoSimColorTint = mNoSimColor;
         mAirplaneModeColorTint = mAirplaneModeColor;
 
-        mSignalCluster.setIgnoreSystemUITuner(true);
         mSignalCluster.setIconTint(mNetworkSignalColor, mNoSimColor, mAirplaneModeColor, mDarkIntensity, mTintArea);
 		}
     }
