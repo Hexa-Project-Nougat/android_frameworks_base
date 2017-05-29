@@ -244,6 +244,7 @@ import com.android.systemui.statusbar.stack.StackViewState;
 import com.android.systemui.slimrecent.RecentController;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.volume.VolumeComponent;
+import com.android.server.statusbar.StatusBarManagerService;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -567,6 +568,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private int mBlurMixedColorFilter;
     private int mBlurLightColorFilter;
 	
+	private StatusBarManagerService mStatusBarMS;
+	
 	public boolean mColorSwitch = false;
 	
     // data/wifi activity arrows
@@ -797,15 +800,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 	                // DO Nothing for now
 			}  else if (uri.equals(Settings.System.getUriFor(
                      Settings.System.STATUSBAR_COLOR_SWITCH))) {
-               		updateNetworkSignalColor();
-	 	      		updateNoSimColor();
-	 	      		updateAirplaneModeColor();
-	 	      		updateStatusIconsColor();	
-	 	      		updateNetworkIconColors();
-					updateRowStates();
-               		updateSpeedbump();
-                	updateClearAll();
-                	updateEmptyShadeView();
+						 mStatusBarMS.restartUI();
              }
              update();
  		}
