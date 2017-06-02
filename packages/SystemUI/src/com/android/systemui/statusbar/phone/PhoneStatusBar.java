@@ -717,6 +717,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUSBAR_COLOR_SWITCH),
                     false, this, UserHandle.USER_ALL);
+			resolver.registerContentObserver(Settings.System.getUriFor(
+				Settings.System.NAVIGATION_BAR_RECENTS),
+					false, this, UserHandle.USER_ALL);
              update();
          }
 		
@@ -799,6 +802,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUS_BAR_NOTIFICATION_ICONS_COLOR))) {
 	                // DO Nothing for now
 			}  else if (uri.equals(Settings.System.getUriFor(
+                     Settings.System.NAVIGATION_BAR_RECENTS))) {
+						 updateRecentsType();
+			}  else if (uri.equals(Settings.System.getUriFor(
                      Settings.System.STATUSBAR_COLOR_SWITCH))) {
 						 mStatusBarMS.restartUI();
              }
@@ -846,6 +852,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
              resolver.unregisterContentObserver(this);
          }
      }
+	 
+	 public void updateRecentsType() {
+	 	ContentResolver resolver = mContext.getContentResolver();
+        boolean stockaospRecents = Settings.System.getIntForUser(resolver,
+                Settings.System.NAVIGATION_BAR_RECENTS, 0, UserHandle.USER_CURRENT) == 0;
+        boolean omniEnabled = Settings.System.getIntForUser(resolver,
+                Settings.System.NAVIGATION_BAR_RECENTS, 0, UserHandle.USER_CURRENT) == 1;
+        boolean gridEnabled = Settings.System.getIntForUser(resolver,
+                Settings.System.NAVIGATION_BAR_RECENTS, 0, UserHandle.USER_CURRENT) == 2;
+		if (stockaospRecents || omniEnabled || gridEnabled)
+		{
+			mStatusBarMS.restartUI();
+		}
+	 }
 
     // ensure quick settings is disabled until the current user makes it through the setup wizard
     private boolean mUserSetup = false;
